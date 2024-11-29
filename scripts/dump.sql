@@ -1,0 +1,2714 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.4 (Debian 16.4-1.pgdg120+1)
+-- Dumped by pg_dump version 17.2
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: datawarehouse; Type: SCHEMA; Schema: -; Owner: admin
+--
+
+CREATE SCHEMA datawarehouse;
+
+
+ALTER SCHEMA datawarehouse OWNER TO admin;
+
+--
+-- Name: staging; Type: SCHEMA; Schema: -; Owner: admin
+--
+
+CREATE SCHEMA staging;
+
+
+ALTER SCHEMA staging OWNER TO admin;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: dt_city; Type: TABLE; Schema: datawarehouse; Owner: admin
+--
+
+CREATE TABLE datawarehouse.dt_city (
+    city_sk bigint NOT NULL,
+    city_version integer,
+    city_datefrom timestamp without time zone,
+    city_dateto timestamp without time zone,
+    city_name character varying(60),
+    city_region character varying(14)
+);
+
+
+ALTER TABLE datawarehouse.dt_city OWNER TO admin;
+
+--
+-- Name: dt_city_city_sk_seq; Type: SEQUENCE; Schema: datawarehouse; Owner: admin
+--
+
+CREATE SEQUENCE datawarehouse.dt_city_city_sk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE datawarehouse.dt_city_city_sk_seq OWNER TO admin;
+
+--
+-- Name: dt_city_city_sk_seq; Type: SEQUENCE OWNED BY; Schema: datawarehouse; Owner: admin
+--
+
+ALTER SEQUENCE datawarehouse.dt_city_city_sk_seq OWNED BY datawarehouse.dt_city.city_sk;
+
+
+--
+-- Name: dt_cuisine; Type: TABLE; Schema: datawarehouse; Owner: admin
+--
+
+CREATE TABLE datawarehouse.dt_cuisine (
+    cuisine_sk bigint NOT NULL,
+    cuisine_version integer,
+    cuisine_datefrom timestamp without time zone,
+    cuisine_dateto timestamp without time zone,
+    cuisine_name character varying(60)
+);
+
+
+ALTER TABLE datawarehouse.dt_cuisine OWNER TO admin;
+
+--
+-- Name: dt_cuisine_cuisine_sk_seq; Type: SEQUENCE; Schema: datawarehouse; Owner: admin
+--
+
+CREATE SEQUENCE datawarehouse.dt_cuisine_cuisine_sk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE datawarehouse.dt_cuisine_cuisine_sk_seq OWNER TO admin;
+
+--
+-- Name: dt_cuisine_cuisine_sk_seq; Type: SEQUENCE OWNED BY; Schema: datawarehouse; Owner: admin
+--
+
+ALTER SEQUENCE datawarehouse.dt_cuisine_cuisine_sk_seq OWNED BY datawarehouse.dt_cuisine.cuisine_sk;
+
+
+--
+-- Name: dt_restaurant; Type: TABLE; Schema: datawarehouse; Owner: admin
+--
+
+CREATE TABLE datawarehouse.dt_restaurant (
+    restaurant_sk bigint NOT NULL,
+    restaurant_version integer,
+    restaurant_datefrom timestamp without time zone,
+    restaurant_dateto timestamp without time zone,
+    restaurant_name character varying(60),
+    restaurant_zipcode character varying(8),
+    restaurant_cuisine_sk bigint,
+    restaurant_city_sk bigint
+);
+
+
+ALTER TABLE datawarehouse.dt_restaurant OWNER TO admin;
+
+--
+-- Name: dt_restaurant_restaurant_sk_seq; Type: SEQUENCE; Schema: datawarehouse; Owner: admin
+--
+
+CREATE SEQUENCE datawarehouse.dt_restaurant_restaurant_sk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE datawarehouse.dt_restaurant_restaurant_sk_seq OWNER TO admin;
+
+--
+-- Name: dt_restaurant_restaurant_sk_seq; Type: SEQUENCE OWNED BY; Schema: datawarehouse; Owner: admin
+--
+
+ALTER SEQUENCE datawarehouse.dt_restaurant_restaurant_sk_seq OWNED BY datawarehouse.dt_restaurant.restaurant_sk;
+
+
+--
+-- Name: ft_awards; Type: TABLE; Schema: datawarehouse; Owner: admin
+--
+
+CREATE TABLE datawarehouse.ft_awards (
+    award_year bigint,
+    award_price character varying(5),
+    award_grade text,
+    award_restaurant_sk bigint
+);
+
+
+ALTER TABLE datawarehouse.ft_awards OWNER TO admin;
+
+--
+-- Name: onestar; Type: TABLE; Schema: staging; Owner: admin
+--
+
+CREATE TABLE staging.onestar (
+    name character varying(60),
+    year bigint,
+    latitude bigint,
+    longitude bigint,
+    city character varying(60),
+    region character varying(14),
+    zipcode character varying(8),
+    cuisine character varying(60),
+    price character varying(5),
+    url character varying(256)
+);
+
+
+ALTER TABLE staging.onestar OWNER TO admin;
+
+--
+-- Name: threestar; Type: TABLE; Schema: staging; Owner: admin
+--
+
+CREATE TABLE staging.threestar (
+    name character varying(60),
+    year bigint,
+    latitude bigint,
+    longitude bigint,
+    city character varying(60),
+    region character varying(14),
+    zipcode character varying(7),
+    cuisine character varying(60),
+    price character varying(5),
+    url character varying(256)
+);
+
+
+ALTER TABLE staging.threestar OWNER TO admin;
+
+--
+-- Name: twostar; Type: TABLE; Schema: staging; Owner: admin
+--
+
+CREATE TABLE staging.twostar (
+    name character varying(60),
+    year bigint,
+    latitude bigint,
+    longitude bigint,
+    city character varying(60),
+    region character varying(60),
+    zipcode character varying(8),
+    cuisine character varying(60),
+    price character varying(5),
+    url character varying(256)
+);
+
+
+ALTER TABLE staging.twostar OWNER TO admin;
+
+--
+-- Name: dt_city city_sk; Type: DEFAULT; Schema: datawarehouse; Owner: admin
+--
+
+ALTER TABLE ONLY datawarehouse.dt_city ALTER COLUMN city_sk SET DEFAULT nextval('datawarehouse.dt_city_city_sk_seq'::regclass);
+
+
+--
+-- Name: dt_cuisine cuisine_sk; Type: DEFAULT; Schema: datawarehouse; Owner: admin
+--
+
+ALTER TABLE ONLY datawarehouse.dt_cuisine ALTER COLUMN cuisine_sk SET DEFAULT nextval('datawarehouse.dt_cuisine_cuisine_sk_seq'::regclass);
+
+
+--
+-- Name: dt_restaurant restaurant_sk; Type: DEFAULT; Schema: datawarehouse; Owner: admin
+--
+
+ALTER TABLE ONLY datawarehouse.dt_restaurant ALTER COLUMN restaurant_sk SET DEFAULT nextval('datawarehouse.dt_restaurant_restaurant_sk_seq'::regclass);
+
+
+--
+-- Data for Name: dt_city; Type: TABLE DATA; Schema: datawarehouse; Owner: admin
+--
+
+COPY datawarehouse.dt_city (city_sk, city_version, city_datefrom, city_dateto, city_name, city_region) FROM stdin;
+0	1	\N	\N	\N	\N
+1	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	\N	Hong Kong
+2	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aarhus	Denmark
+3	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aird Mhór/Ardmore	Ireland
+4	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Anstruther	United Kingdom
+5	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ascot	United Kingdom
+6	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Athína	Greece
+7	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Auchterarder	United Kingdom
+8	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aughton	United Kingdom
+9	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bagshot	United Kingdom
+10	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Baile Mhic Andáin/Thomastown	Ireland
+11	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ballydehob	Ireland
+12	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Baltimore	Ireland
+13	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bangkok	Thailand
+14	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Baslow	United Kingdom
+15	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bath	United Kingdom
+16	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Belfast	United Kingdom
+17	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Belgravia	United Kingdom
+18	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bermondsey	United Kingdom
+19	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Biddenden	United Kingdom
+20	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Birkenhead	United Kingdom
+21	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Birmingham	United Kingdom
+22	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Blackrock	Ireland
+23	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bloomsbury	United Kingdom
+24	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bowness-on-Windermere	United Kingdom
+25	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bray	United Kingdom
+26	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bristol	United Kingdom
+27	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Budapest	Hungary
+28	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Burchett's Green	United Kingdom
+29	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cambridge	United Kingdom
+30	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cartmel	United Kingdom
+31	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Castle Combe	United Kingdom
+32	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chagford	United Kingdom
+33	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chelsea	United Kingdom
+34	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cheltenham	United Kingdom
+35	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chester	United Kingdom
+36	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chew Magna	United Kingdom
+37	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chicago	Chicago
+38	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chiswick	United Kingdom
+39	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cill Chainnigh/Kilkenny	Ireland
+40	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	City Centre	Ireland
+41	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	City of London	United Kingdom
+42	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Clapham Common	United Kingdom
+43	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Clerkenwell	United Kingdom
+44	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Colerne	United Kingdom
+45	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Corcaigh/Cork	Ireland
+46	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Costa Mesa	California
+47	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dalry	United Kingdom
+48	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dorking	United Kingdom
+49	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dubrovnik	Croatia
+50	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	East Chisenbury	United Kingdom
+51	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Edinburgh	United Kingdom
+52	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Egham	United Kingdom
+53	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fence	United Kingdom
+54	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Finsbury	United Kingdom
+55	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fordwich	United Kingdom
+56	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fredericia	Denmark
+57	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fulham	United Kingdom
+58	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gaillimh/Galway	Ireland
+59	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Göteborg	Sweden
+60	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Grasmere	United Kingdom
+61	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gravetye	United Kingdom
+62	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Great Milton	United Kingdom
+63	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hallwang	Austria
+64	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hammersmith	United Kingdom
+65	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hampton in Arden	United Kingdom
+66	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Harome	United Kingdom
+67	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Helsingfors / Helsinki	Finland
+68	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Henne	Denmark
+69	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hong Kong	Hong Kong
+70	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Horsham	United Kingdom
+71	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hunstanton	United Kingdom
+72	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hyde Park	United Kingdom
+73	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hørve	Denmark
+74	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ilfracombe	United Kingdom
+75	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Järpen	Sweden
+76	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kenilworth	United Kingdom
+77	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kensington	United Kingdom
+78	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kew	United Kingdom
+79	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kleinwalsertal	Austria
+80	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Knowstone	United Kingdom
+81	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	København	Denmark
+82	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Langho	United Kingdom
+83	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Leeds	United Kingdom
+84	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Leith	United Kingdom
+85	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Leynar	Denmark
+86	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lios Dúin Bhearna/Lisdoonvarna	Ireland
+87	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Little Dunmow	United Kingdom
+88	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Llanddewi Skirrid	United Kingdom
+89	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Llandrillo	United Kingdom
+90	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	London	United Kingdom
+91	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Los Angeles	California
+92	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lovran	Croatia
+93	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lympstone	United Kingdom
+94	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Macau	Macau
+95	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Machynlleth	United Kingdom
+96	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Malmesbury	United Kingdom
+97	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Malmö	Sweden
+98	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Marlow	United Kingdom
+99	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Marylebone	United Kingdom
+100	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mayfair	United Kingdom
+101	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Menai Bridge/Porthaethwy	United Kingdom
+102	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Monterey	California
+103	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Montgomery/Trefaldwyn	United Kingdom
+104	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Morston	United Kingdom
+105	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mountsorrel	United Kingdom
+106	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Murcott	United Kingdom
+107	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Newbury	United Kingdom
+108	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Newcastle upon Tyne	United Kingdom
+109	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	New York	New York City
+110	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	North Kensington	United Kingdom
+111	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Nottingham	United Kingdom
+112	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oldstead	United Kingdom
+113	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oslo	Norway
+114	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oxford	United Kingdom
+115	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Padstow	United Kingdom
+116	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pateley Bridge	United Kingdom
+117	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Peat Inn	United Kingdom
+118	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pedersker	Denmark
+119	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Penarth	United Kingdom
+120	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Phuket	Thailand
+121	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Port Isaac	United Kingdom
+122	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Portscatho	United Kingdom
+123	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Præstø	Denmark
+124	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Praha	Czech Republic
+125	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Regent's Park	United Kingdom
+126	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rio de Janeiro - 22021	Rio de Janeiro
+127	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rio de Janeiro - 22271	Rio de Janeiro
+128	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rio de Janeiro - 22441	Rio de Janeiro
+129	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rio de Janeiro - 22470	Rio de Janeiro
+130	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ripley	United Kingdom
+131	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rovinj	Croatia
+132	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sacramento	California
+133	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Saint Helier/Saint-Hélier	United Kingdom
+134	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Saint James's	United Kingdom
+135	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Salzburg	Austria
+136	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	San Diego	California
+137	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	San Francisco	California
+138	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 01401	Sao Paulo
+139	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 01411	Sao Paulo
+140	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 01426	Sao Paulo
+141	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 04080	Sao Paulo
+142	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 04509	Sao Paulo
+143	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 04531	Sao Paulo
+144	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 04538	Sao Paulo
+145	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 05413	Sao Paulo
+146	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 05415	Sao Paulo
+147	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 05416	Sao Paulo
+148	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	São Paulo - 05706	Sao Paulo
+149	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Seasalter	United Kingdom
+150	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Seoul	South Korea
+151	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shinfield	United Kingdom
+152	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shoreditch	United Kingdom
+153	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Šibenik	Croatia
+154	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Singapore	Singapore
+155	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Skåne-Tranås	Sweden
+156	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Soho	United Kingdom
+157	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	South Dalton	United Kingdom
+158	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	South San Francisco	California
+159	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Spitalfields	United Kingdom
+160	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Stavanger	Norway
+161	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Stockholm	Sweden
+162	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Stratford-upon-Avon	United Kingdom
+163	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Summerhouse	United Kingdom
+164	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Taipei	Taipei
+165	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Torquay	United Kingdom
+166	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Trondheim	Norway
+167	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Upper Hambleton	United Kingdom
+168	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Växjö	Sweden
+169	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Vejle	Denmark
+170	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Victoria	United Kingdom
+171	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Wandsworth	United Kingdom
+172	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Warszawa	Poland
+173	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Washington, D.C.	Washington DC
+174	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Waternish	United Kingdom
+175	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Westminster	United Kingdom
+176	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Whitebrook	United Kingdom
+177	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Wien	Austria
+178	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Winchester	United Kingdom
+179	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Winteringham	United Kingdom
+180	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Zagreb	Croatia
+\.
+
+
+--
+-- Data for Name: dt_cuisine; Type: TABLE DATA; Schema: datawarehouse; Owner: admin
+--
+
+COPY datawarehouse.dt_cuisine (cuisine_sk, cuisine_version, cuisine_datefrom, cuisine_dateto, cuisine_name) FROM stdin;
+0	1	\N	\N	\N
+1	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	American
+2	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Asian
+3	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Asian contemporary
+4	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Asian influences
+5	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Australian
+6	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Austrian
+7	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Barbecue
+8	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Californian
+9	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cantonese
+10	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cantonese Roast Meats
+11	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chinese
+12	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Classic cuisine
+13	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Classic French
+14	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Contemporary
+15	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Creative
+16	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Creative British
+17	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Creative French
+18	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Danish
+19	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dim Sum
+20	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	European
+21	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	European contemporary
+22	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Finnish
+23	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	French
+24	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	French contemporary
+25	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fujian
+26	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fusion
+27	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gastropub
+28	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hang Zhou
+29	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hunanese and Sichuan
+30	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Indian
+31	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Innovative
+32	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	International
+33	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Italian
+34	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Italian contemporary
+35	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Japanese
+36	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Japanese contemporary
+37	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Korean
+38	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Korean contemporary
+39	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Market cuisine
+40	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Meats and grills
+41	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mediterranean
+42	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mediterranean cuisine
+43	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mexican
+44	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	modern
+45	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Modern British
+46	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Modern cuisine
+47	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Modern French
+48	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Moroccan
+49	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Noodles and congee
+50	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Peranakan
+51	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Regional cuisine
+52	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Scandinavian
+53	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Seafood
+54	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shanghainese
+55	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sichuan
+56	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sichuan-Huai Yang
+57	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Southern Thai
+58	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Spanish
+59	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Steakhouse
+60	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Street Food
+61	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi
+62	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Taiwanese
+63	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Taizhou
+64	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Temple cuisine
+65	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Teppanyaki
+66	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Thai
+67	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Thai Contemporary
+68	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Traditional British
+69	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Vegetarian
+\.
+
+
+--
+-- Data for Name: dt_restaurant; Type: TABLE DATA; Schema: datawarehouse; Owner: admin
+--
+
+COPY datawarehouse.dt_restaurant (restaurant_sk, restaurant_version, restaurant_datefrom, restaurant_dateto, restaurant_name, restaurant_zipcode, restaurant_cuisine_sk, restaurant_city_sk) FROM stdin;
+0	1	\N	\N	\N	\N	\N	\N
+1	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	108	1401 K	46	81
+2	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	21212	EH7 5AB	15	51
+3	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	28+	411 34	46	59
+4	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	360º	20000	46	49
+5	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	8 1/2 Otto e Mezzo - Bombana	N/A	33	94
+6	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	8½ Otto e Mezzo - Bombana	N/A	33	69
+7	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	A. Wong	SW1V 1DE	11	170
+8	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Acadia	60616	14	37
+9	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Acquerello	94109	33	137
+10	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Adam's	B2 5UG	46	21
+11	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Addison	92130	14	136
+12	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	aend	1010	46	177
+13	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Agern	10017	52	109
+14	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Agrikultur	113 54	46	161
+15	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ah Yat Harbour View (Tsim Sha Tsui)	N/A	9	69
+16	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ai Fiori	10018	33	109
+17	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Al's Place	94110	8	137
+18	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Alain Ducasse at Morpheus	N/A	24	94
+19	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Alain Ducasse at The Dorchester	W1K 1QA	23	100
+20	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aldea	10011	41	109
+21	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Alinea	60614	14	37
+22	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Alla Prima	N/A	31	150
+23	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Alma	N/A	21	154
+24	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aloë	125 33	15	161
+25	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Alouette	2300 S	46	81
+26	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Alyn Williams at The Westbury	W1S 2YF	46	100
+27	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Amador	1190	15	177
+28	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Amaya	SW1X 8JT	30	17
+29	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Amber	N/A	24	69
+30	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Andrew Fairlie at Gleneagles	PH3 1NF	17	7
+31	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Angler	EC2M 2AF	53	54
+32	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Angler	94101	14	137
+33	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aniar	N/A	15	58
+34	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aquavit	10022	52	109
+35	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aquavit	SW1Y 4QQ	52	134
+36	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Arbor	N/A	31	\N
+37	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Arcane	N/A	21	69
+38	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ask	00170	46	67
+39	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aska	11249	52	109
+40	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aster	94110	8	137
+41	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	atelier Amaro	00 507	46	172
+42	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Atelier Crenn	94123	14	137
+43	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Atera	10013	14	109
+44	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Atomix	N/A	37	109
+45	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Auberge du Soleil	94573	8	137
+46	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Aubergine	93921	14	102
+47	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	a‚o‚c	1302 K	46	81
+48	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Babbo	10011	33	109
+49	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Babel	1052	46	27
+50	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bacchanalia	N/A	31	154
+51	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Balwoo Gongyang	N/A	64	150
+52	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Band of Bohemia	60640	27	37
+53	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bar Crenn	94101	23	137
+54	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Barrafina	W1D 3LL	58	156
+55	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bar Uchū	10002	35	109
+56	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bâtard	10013	14	109
+57	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Baumé	94306	14	158
+58	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Beefbar	N/A	59	69
+59	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Belmond Le Manoir aux Quat' Saisons	OX44 7PD	23	62
+60	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Belon	N/A	23	69
+61	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Benares	W1J 6BS	30	100
+62	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Béni	N/A	24	154
+63	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Benu	94105	2	137
+64	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bhoga	411 14	15	59
+65	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bicena	N/A	37	150
+66	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Birdsong	94101	1	137
+67	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bistro Na's	91780	11	91
+68	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Blackbird	60661	14	37
+69	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Blackbird	RG20 8AQ	12	107
+70	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Black Rat	SO23 0HX	46	178
+71	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Black Swan	YO61 4BL	45	112
+72	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Blanca	11206	14	109
+73	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bloom in the Park	214 66	15	97
+74	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Blue Duck Tavern	20037	1	173
+75	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Blue Hill	10011	1	109
+76	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bo.lan	N/A	66	13
+77	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bohemia	JE2 4UH	46	133
+78	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bo Innovation	N/A	31	69
+79	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Boka	60614	14	37
+80	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Borkonyha Winekitchen	1051	46	27
+81	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Botrini's	152 33	41	6
+82	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bouchon	94599	23	137
+83	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bouley at Home	N/A	14	109
+84	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Braci	N/A	34	154
+85	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Braidwoods	KA24 4LN	12	47
+86	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Brat	E1 6JL	68	152
+87	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bresca	20000	14	173
+88	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bulrush	BS6 5TZ	45	26
+89	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Burnt Ends	N/A	7	154
+90	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Bybrook	SN14 7HR	45	31
+91	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Café Boulud	10021	23	109
+92	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Café China	10016	11	109
+93	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Californios	94110	43	137
+94	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Campagne	N/A	45	39
+95	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Campton Place	94108	30	137
+96	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Candlenut	N/A	50	154
+97	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Canvas	N/A	31	13
+98	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Caprice	N/A	23	69
+99	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Carbone	10003	33	109
+100	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Carpe Diem	5020	39	135
+101	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Carters of Moseley	B13 9EZ	45	21
+102	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Casa Enríque	11101	43	109
+103	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Casamia	BS1 6FU	15	26
+104	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Casa Mono	10003	58	109
+105	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Caviar Russe	10022	14	109
+106	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Celebrity Cuisine	N/A	9	69
+107	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Céleste	SW1X 7TA	17	17
+108	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chapter One	D1	46	40
+109	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cheek by Jowl	N/A	5	154
+110	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chef's Table at Brooklyn Fare	10018	14	109
+111	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chef Kang's	N/A	9	154
+112	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chestnut	N/A	46	11
+113	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chez Bruce	SW17 7EG	23	171
+114	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chez TJ	94041	14	158
+115	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Chim by Siam Wisdom	N/A	66	13
+116	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cipriani	001	33	126
+117	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	City Social	EC2N 1HQ	46	41
+118	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Claro	N/A	43	109
+119	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Claude Bosi at Bibendum	SW3 6RD	23	33
+120	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Clock House	GU23 6AQ	46	130
+121	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Clou	2100 K	46	81
+122	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Club Gascon	EC1A 9DS	23	90
+123	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Coi	94133	14	137
+124	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Commis	94601	14	137
+125	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Commonwealth	94110	14	137
+126	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Contra	10002	14	109
+127	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	CORE by Clare Smyth	W11 2PN	45	110
+128	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Corner House	N/A	31	154
+129	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Costes	1092	46	27
+130	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Costes Downtown	1051	46	27
+131	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cote	10010	37	109
+132	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Coworth Park	SL5 7SE	46	5
+133	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Credo	7066	15	166
+134	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Crown	SL6 6QZ	51	28
+135	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Crystal Jade Golden Palace	N/A	11	154
+136	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	CUT	90212	59	91
+137	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Cut	N/A	59	154
+138	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	D.O.M.	011	\N	139
+139	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Daniel	10065	23	109
+140	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Daniel Berlin	273 92	15	155
+141	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Danny's Steakhouse	110	59	164
+142	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Da San Yuan	110	9	164
+143	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Das Loft	1020	46	177
+144	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Da-Wan	110	7	164
+145	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Del Posto	10011	33	109
+146	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Demo	00120	46	67
+147	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dialogue	90401	14	91
+148	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dining in Space	N/A	24	150
+149	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dining Room at The Goring	SW1W 0JW	68	170
+150	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dinner by Heston Blumenthal	SW1X 7LA	68	72
+151	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Domestic	8000	46	2
+152	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dosa	N/A	31	150
+153	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Draga di Lovrana	51415	46	92
+154	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Driftwood	TR2 5EW	46	122
+155	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Duddell's	N/A	9	69
+156	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Dusek's (Board & Beer)	60608	27	37
+157	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Écriture	N/A	24	69
+158	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Edvard	1010	46	177
+159	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Eipic	BT1 6PF	46	16
+160	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ekstedt	11446	40	161
+161	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Elements	N/A	24	13
+162	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Elephant	TQ1 2BH	45	165
+163	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Eleven Madison Park	10010	14	109
+164	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	EL Ideas	60618	14	37
+165	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Elizabeth	60625	14	37
+166	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Elske	60607	14	37
+167	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Elystan Street	SW3 3NT	45	33
+168	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Entente	60657	14	37
+169	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Épure	N/A	23	\N
+170	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Era Ora	1414 K	33	81
+171	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Esszimmer	5020	15	135
+172	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Everest	60605	23	37
+173	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Evvai	000	44	146
+174	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Exquisine	N/A	31	150
+175	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	FAGN	7010	46	166
+176	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Farmhouse Inn & Restaurant	95436	8	137
+177	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Faro	11237	1	109
+178	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fat Duck	SL6 2AQ	15	25
+179	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fäviken Magasinet	837 94	15	75
+180	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Feng Wei Ju	N/A	29	94
+181	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Field	110 00	46	124
+182	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fiola	20004	33	173
+183	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fischer's at Baslow Hall	DE45 1RR	46	14
+184	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Five Fields	SW3 2SP	46	33
+185	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fordwich Arms	CT2 0DB	46	55
+186	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Forest Side	LA22 9RN	45	60
+187	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	formel B	1800 C	46	81
+188	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Forum	N/A	9	69
+189	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fraiche	CH43 5SG	15	20
+190	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Frantzén	111 22	46	161
+191	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Frederikshøj	8000	15	2
+192	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Frederiksminde	4720	15	123
+193	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Fu Ho (Tsim Sha Tsui)	N/A	9	69
+194	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gaa	N/A	31	13
+195	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gabriel Kreuther	10036	14	109
+196	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gaggan	N/A	31	13
+197	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Galt	0263	46	113
+198	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Galvin at Windows	W1K 1BE	46	100
+199	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Galvin La Chapelle	E1 6DY	23	159
+200	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gaon	N/A	37	150
+201	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Garibaldi	N/A	33	154
+202	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gary Danko	94109	14	137
+203	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gastrologik	114 51	15	161
+204	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gastromé	8000	46	2
+205	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Geranium	2100 Ø	15	81
+206	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gidleigh Park	TQ13 8HH	46	32
+207	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ginza Sushi ichi	N/A	61	13
+208	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Golden Flower	N/A	11	94
+209	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Golden Formosa	110	62	164
+210	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Goosefoot	60625	14	37
+211	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gordon Ramsay	SW3 4HP	23	33
+212	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gotgan	N/A	37	150
+213	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gotham Bar and Grill	10003	1	109
+214	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gramercy Tavern	10003	14	109
+215	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gravetye Manor	RH19 4LJ	45	61
+216	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Greenhouse	D2	46	40
+217	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Greenhouse	W1J 5NY	15	100
+218	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Grön	00180	22	67
+219	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Guo Fu Lou	N/A	9	69
+220	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Gymkhana	W1S 4JH	30	100
+221	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hakkasan Hanway Place	W1T 1HD	11	23
+222	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hakkasan Mayfair	W1J 6QB	11	100
+223	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hambleton Hall	LE15 8TH	12	167
+224	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hana re	92626	35	46
+225	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hand and Flowers	SL7 2BP	45	98
+226	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hansikgonggan	N/A	37	150
+227	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Harbor House	N/A	8	137
+228	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Harwood Arms	SW6 1QP	45	57
+229	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hashiri	94103	35	137
+230	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hayato	90001	35	91
+231	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hélène Darroze at The Connaught	W1K 2AL	46	100
+232	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Henne Kirkeby Kro	6854	12	68
+233	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Heron & Grey	N/A	46	22
+234	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hide	W1J 7NB	45	100
+235	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hill Street Tai Hwa Pork Noodle	N/A	60	154
+236	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hinds Head	SL6 2AB	68	25
+237	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hirohisa	10012	35	109
+238	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ho Hung Kee	N/A	49	69
+239	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	House	N/A	46	3
+240	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	House of Tides	NE1 3RF	46	108
+241	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	HRiSHi	LA23 3NE	46	24
+242	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Huto	004	35	141
+243	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Hytra	11745	46	6
+244	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ichigo Ichie	N/A	35	45
+245	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ichimura at Uchū	10002	35	109
+246	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Iggy's	N/A	21	154
+247	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ikarus	5020	15	135
+248	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ikoyi	SW1Y 4AH	15	134
+249	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Imperial Treasure Fine Chinese Cuisine	N/A	9	69
+250	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Imperial Treasure Fine Teochew Cuisine (Orchard)	N/A	11	154
+251	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Impromptu by Paul Lee	110	31	164
+252	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	IM Teppanyaki & Wine	N/A	65	69
+253	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	In Situ	94103	32	137
+254	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	J'AIME by Jean-Michel Lorain	N/A	24	13
+255	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jaan	N/A	24	154
+256	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jade Dragon	N/A	9	94
+257	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	James Sommerin	CF64 3AU	46	119
+258	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jardin de Jade (Wan Chai)	N/A	54	69
+259	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jay Fai	N/A	60	13
+260	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jean-Georges	10023	14	109
+261	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jeju Noodle Bar	10014	37	109
+262	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jewel Bako	10003	35	109
+263	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jiang-Nan Chun	N/A	9	154
+264	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jin Jin	N/A	11	150
+265	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	John's House	LE12 7AR	46	105
+266	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Joo Ok	N/A	38	150
+267	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jordnær	2820	18	81
+268	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jungsik	10013	37	109
+269	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jungsik	N/A	38	150
+270	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	jū-ni	94117	35	137
+271	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Junoon	10010	30	109
+272	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Jun Sakamoto	000	35	145
+273	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kadeau Bornholm	3720	15	118
+274	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kadeau Copenhagen	1408 K	46	81
+275	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kai	W1K 2QU	11	100
+276	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kaiseki Den by Saotome	N/A	35	69
+277	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kajitsu	10016	35	109
+278	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kali	90028	8	91
+279	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kam's Roast Goose	N/A	10	69
+280	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kanoyama	10003	35	109
+281	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kan Suke	000	35	138
+282	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kashiwaya	N/A	35	69
+283	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kato	90025	2	91
+284	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Keiko à Nob Hill	94109	26	137
+285	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ken An Ho	110	35	164
+286	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kenzo	94559	35	137
+287	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kiin Kiin	2200 N	66	81
+288	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kilian Stuba	87568	15	79
+289	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	King	N/A	9	94
+290	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kinjo	94109	35	137
+291	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kin Khao	94102	66	137
+292	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kinoshita	001	35	142
+293	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kinship	20001	14	173
+294	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kitchen Table at Bubbledogs	W1T 4QG	46	23
+295	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kitchen W8	W8 6AH	46	77
+296	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kitchin	EH6 6LX	46	84
+297	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kitcho	110	61	164
+298	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ko	10003	14	109
+299	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kojima	N/A	61	150
+300	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Koka	411 25	46	59
+301	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kokkeriet	1306 K	46	81
+302	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	KOKS	335	15	85
+303	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Komi	20036	41	173
+304	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kong Hans Kælder	1070 K	13	81
+305	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Konstantin Filippou	1010	46	177
+306	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kontrast	0178	52	113
+307	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kosaka	10011	35	109
+308	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kosushi	110	35	144
+309	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kwonsooksoo	N/A	37	150
+310	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Kyo Ya	10009	35	109
+311	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	L'Amitié	N/A	23	150
+312	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	L'Appart	10281	23	109
+313	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	L'Atelier de Joël Robuchon	N/A	24	69
+314	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	L'Atelier de Joël Robuchon	N/A	23	109
+315	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	L'Atelier de Joël Robuchon	110	24	164
+316	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	L'Ecrivain	D2	46	40
+317	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	L'Enclume	LA11 6PZ	15	30
+318	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	L'Ortolan	RG2 9BY	23	151
+319	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Labyrinth	N/A	31	154
+320	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	La Dame de Pic	EC3N 4AJ	47	41
+321	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	La Degustation Bohême Bourgeoise	110 00	46	124
+322	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lady Helen	N/A	46	10
+323	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lai Heen	N/A	9	94
+324	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lasai	020	44	127
+325	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	La Toque	94573	14	137
+326	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	La Trompette	W4 2EU	45	38
+327	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	La Yeon	N/A	37	150
+328	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lazy Bear	94110	14	137
+329	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Bernardin	10019	53	109
+330	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Champignon Sauvage	GL50 2AQ	46	34
+331	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Ciel by Toni Mörwald	1010	12	177
+332	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Comptoir	90020	8	91
+333	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Coucou	10013	23	109
+334	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ledbury	W11 2AQ	46	110
+335	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Du	N/A	66	13
+336	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lee Jong Kuk 104	N/A	37	150
+337	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Gavroche	W1K 7QR	23	100
+338	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Grill de Joël Robuchon	N/A	23	109
+339	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lei Garden	N/A	9	154
+340	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lei Garden (Kwun Tong)	N/A	9	69
+341	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lei Garden (Mong Kok)	N/A	9	69
+342	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Normandie	N/A	24	13
+343	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Le Palais	110	9	164
+344	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Leroy	EC2A 4NU	45	152
+345	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Les Amis	N/A	23	154
+346	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Liao Fan Hong Kong Soya Sauce Chicken Rice & Noodle	N/A	60	154
+347	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Loaf On	N/A	9	69
+348	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Loam	N/A	15	58
+349	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Locanda Locatelli	W1H 7JZ	33	99
+350	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Loch Bay	IV55 8GA	46	174
+351	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	logy	110	3	164
+352	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Longtail	110	31	164
+353	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lord Stanley	94109	8	137
+354	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Luce	94103	14	137
+355	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lung King Heen	N/A	9	69
+356	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lyle's	E1 6JJ	45	152
+357	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Lympstone Manor	EX8 3NZ	46	93
+358	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Maaemo	0191	46	113
+359	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ma Cuisine	N/A	23	154
+360	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Madcap	94960	14	137
+361	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Madera	94025	14	137
+362	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Madrona Manor	95448	14	137
+363	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mandarin Grill + Bar	N/A	21	69
+364	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Maní	000	\N	146
+365	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Manresa	95030	14	158
+366	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Man Wah	N/A	9	69
+367	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Marchal	1050 K	46	81
+368	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Marcus	SW1X 7RL	46	17
+369	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Marea	10019	53	109
+370	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Martin Wishart	EH6 6RA	46	84
+371	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Masa	10019	35	109
+372	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Masons Arms	EX36 4RY	13	80
+373	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Masseria	20002	33	173
+374	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mathias Dahlgren-Matbaren	103 27	46	161
+375	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Matt Worswick at The Latymer	GU19 5EU	46	9
+376	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Maude	90212	14	91
+377	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Maum	94101	37	158
+378	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Meadowsweet	11212	41	109
+379	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mee	001	4	126
+380	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Meta	N/A	31	154
+381	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Methavalai Sorndaeng	N/A	66	13
+382	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Métier	20001	14	173
+383	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mews	N/A	46	12
+384	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mezzaluna	N/A	31	13
+385	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Me‚Mu	7100	46	169
+386	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Michael Mina	94102	14	137
+387	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Midsummer House	CB4 1HA	46	29
+388	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ming Court	N/A	9	69
+389	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ming Fu	110	62	164
+390	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mingles	N/A	38	150
+391	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	minibar	20004	14	173
+392	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mister Jiu's	94108	11	137
+393	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mizumi (Macau)	N/A	35	94
+394	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Monte	52210	15	131
+395	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Moor Hall	L39 6RT	45	8
+396	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mori Sushi	90064	35	91
+397	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Morston Hall	NR25 7AA	45	104
+398	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mosu	N/A	31	150
+399	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mountain and Sea House	110	62	164
+400	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mourad	94105	48	137
+401	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Mraz & Sohn	1200	15	177
+402	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	MUME	110	21	164
+403	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Muoki	N/A	31	150
+404	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Murano	W1J 5PP	33	100
+405	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	n/naka	90034	14	91
+406	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Nahm	N/A	66	13
+407	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	New Punjab Club	N/A	30	69
+408	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Nico	94101	14	137
+409	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Nix	10003	69	109
+410	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Noda	N/A	35	109
+411	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Noel	10000	46	180
+412	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	noma	1432 K	15	81
+413	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	NoMad	10001	14	109
+414	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Northcote	BB6 8BE	45	82
+415	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	North Pond	60614	14	37
+416	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Nouri	N/A	31	154
+417	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Nozawa Bar	90210	35	91
+418	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Number One	EH2 2EQ	46	51
+419	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Nut Tree	OX5 2RE	68	106
+420	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oaxen Krog	11521	15	161
+421	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Octavia	94109	8	137
+422	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Octavium	N/A	33	69
+423	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Odette	N/A	24	154
+424	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Okuda	N/A	35	109
+425	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Olive Tree	BA1 2QF	46	15
+426	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Olo	00170	46	67
+427	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Olympe	230	23	129
+428	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Omakase	94103	35	137
+429	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Onyx	1051	46	27
+430	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Operakällaren	111 86	12	161
+431	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ora	00150	46	67
+432	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oriole	60661	14	37
+433	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oro	015	\N	128
+434	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Orsa & Winston	90013	26	91
+435	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Osteria Mozza	90028	33	91
+436	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oteque	020	44	127
+437	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Outlaw's Fish Kitchen	PL29 3RH	53	121
+438	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	OX	BT1 3LA	45	16
+439	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oxford Kitchen	OX2 7HQ	45	114
+440	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Oxomoco	11222	43	109
+441	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Paco Tapas	BS1 6FU	58	26
+442	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Palace	00130	46	67
+443	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pang's Kitchen	N/A	9	69
+444	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Parachute	60618	26	37
+445	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Paste	N/A	66	13
+446	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Patrick Guilbaud	D2	47	40
+447	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Paul Ainsworth at No.6	PL28 8AP	46	115
+448	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pearl Dragon	N/A	9	94
+449	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Peel's	B92 ODQ	16	65
+450	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pelegrini	22000	46	153
+451	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Per Se	10019	14	109
+452	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Peter Luger	11211	59	109
+453	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pétrus	SW1X 8EA	23	17
+454	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pfefferschiff	5300	12	63
+455	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Picchi	001	33	140
+456	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pied à Terre	W1T 2NH	15	23
+457	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pierre	N/A	24	69
+458	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pineapple and Pearls	20003	14	173
+459	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pipe and Glass	HU17 7PN	45	157
+460	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Plume	20036	20	173
+461	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Plumed Horse	95070	14	158
+462	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	PM & Vänner	352 31	15	168
+463	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pollen Street Social	W1S 1NQ	15	100
+464	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pony & Trap	BS40 8TQ	45	36
+465	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Poom	N/A	37	150
+466	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Portland	W1W 6QQ	46	125
+467	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Pramerl & the Wolf	1090	15	177
+468	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Protégé	94301	14	158
+469	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Providence	90028	53	91
+470	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	PRU	N/A	31	120
+471	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Purnell's	B3 2DH	46	21
+472	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Putien (Kitchener Road)	N/A	25	154
+473	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Qi (Wan Chai)	N/A	55	69
+474	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Q Sushi	90017	35	91
+475	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Quilon	SW1E 6AF	30	170
+476	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Quince	94133	14	137
+477	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Raby Hunt	DL2 3UD	45	163
+478	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rasa	94010	30	137
+479	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	RAW	110	31	164
+480	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rech	N/A	53	69
+481	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Red Lion Freehouse	SN9 6AQ	12	50
+482	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Relæ	2200 N	46	81
+483	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	RE-NAA	4006	15	160
+484	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Restaurant Hywel Jones by Lucknam Park	SN14 8AZ	45	44
+485	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Restaurant Nathan Outlaw	PL29 3SB	53	121
+486	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Restaurant Sat Bains	NG7 2SA	15	111
+487	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Restaurant Tristan	RH12 1HU	45	70
+488	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	R-Haan	N/A	66	13
+489	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rhubarb	N/A	24	154
+490	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rich Table	94102	14	137
+491	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ritz Restaurant	W1J 9BR	45	175
+492	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	River Café	W6 9HA	33	64
+493	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Robuchon au Dôme	N/A	24	94
+494	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rogan & Co	LA11 6QD	16	30
+495	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Roganic	W1U 3DB	16	99
+496	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Roister	60607	14	37
+497	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rose's Luxury	20003	14	173
+498	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ruean Panya	N/A	66	13
+499	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Rustic Canyon	90401	8	91
+500	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ryo Gastronomia	001	35	143
+501	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Saawaan	N/A	67	13
+502	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sabi Omakase	4013	61	160
+503	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sabor	W1B 4BR	58	100
+504	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Saint Pierre	N/A	24	154
+505	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Saison	94107	8	137
+506	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Salt	CV37 6HB	45	162
+507	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Samphire	JE2 4TQ	46	133
+508	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Saneh Jaan	N/A	66	13
+509	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Satsuki	10036	35	109
+510	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	SAV	21875	15	97
+511	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Savelberg	N/A	24	13
+512	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Schwa	60662	14	37
+513	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	SENNS.Restaurant	5020	15	135
+514	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Senses	00 085	46	172
+515	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sepia	60661	1	37
+516	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Seven Park Place	SW1A 1LS	46	134
+517	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shang Palace	N/A	9	69
+518	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shibumi	90014	35	91
+519	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	SHIKI	1010	35	177
+520	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shinji (Bras Basah Road)	N/A	61	154
+521	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shinji (Tanglin Road)	N/A	61	154
+522	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shinji by Kanesaka	N/A	61	94
+523	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shin Sushi	91436	35	91
+524	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shisen Hanten	N/A	11	154
+525	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shoukouwa	N/A	61	154
+526	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shoun RyuGin	110	36	164
+527	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Shunji	90064	35	91
+528	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Silvio Nickol Gourmet Restaurant	1010	46	177
+529	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Simon Radley at Chester Grosvenor	CH1 1LT	46	35
+530	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Simpsons	B15 3DU	46	21
+531	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	SingleThread	95448	14	137
+532	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Siren by RW	20005	53	173
+533	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sketch (The Lecture Room & Library)	W1S 2XG	47	100
+534	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	SK Mat & Människor	412 55	46	59
+535	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Slotskøkkenet	4534	15	73
+536	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Smyth	60607	14	37
+537	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Social Eating House	W1F 7NR	46	156
+538	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Soigné	N/A	31	150
+539	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Somni	90048	14	91
+540	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sons & Daughters	94108	14	137
+541	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sorn	N/A	57	13
+542	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sorrel	RH4 2JU	45	48
+543	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sorrel	94101	8	137
+544	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sosban & The Old Butchers	LL59 5EE	46	101
+545	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Spiaggia	60611	33	37
+546	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Spondi	116 36	23	6
+547	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	SPQR	94115	33	137
+548	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Spring Moon	N/A	9	69
+549	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Spruce	94118	8	137
+550	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sra Bua by Kiin Kiin	N/A	67	13
+551	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Stand	1061	46	27
+552	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Star Inn at Harome	YO62 5JE	45	66
+553	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	State Bird Provisions	94115	1	137
+554	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Statholdergaarden	0151	12	113
+555	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Stay	N/A	24	150
+556	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Steirereck im Stadtpark	1030	15	177
+557	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	St John	EC1M 4AY	68	43
+558	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Story	SE1 2JX	46	18
+559	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Stud!o at The Standard	1058 K	15	81
+560	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Suan Thip	N/A	66	13
+561	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Substans	8000	46	2
+562	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sühring	N/A	21	13
+563	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Summer Palace	N/A	9	69
+564	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Summer Palace	N/A	9	154
+565	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Summer Pavilion	N/A	9	154
+566	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sun Tung Lok	N/A	9	69
+567	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Amamoto	110	61	164
+568	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Amane	10017	35	109
+569	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Ginza Onodera	N/A	35	91
+570	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Ginza Onodera	10017	35	109
+571	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Ichi	N/A	61	154
+572	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Inoue	10027	35	109
+573	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Kimura	N/A	61	154
+574	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Nakazawa	10014	35	109
+575	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Nomura	110	61	164
+576	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Noz	N/A	35	109
+577	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Ryu	110	61	164
+578	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Saito	N/A	61	69
+579	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Shikon	N/A	61	69
+580	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Sho	113 28	35	161
+581	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Taro	20036	35	173
+582	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Tokami	N/A	61	69
+583	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Wadatsumi	N/A	61	69
+584	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Yasuda	10017	35	109
+585	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Sushi Yoshizumi	94401	35	137
+586	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Søllerød Kro	2840	46	81
+587	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	T'ang Court	N/A	9	69
+588	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Table for Four	N/A	21	150
+589	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Taco María	92626	43	46
+590	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tail Up Goat	20009	14	173
+591	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tainan Tan Tsu Mien Seafood	110	53	164
+592	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Taïrroir	110	31	164
+593	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Takumi by Daisuke Mori	N/A	31	69
+594	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tangará Jean-Georges	290	44	148
+595	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tate	N/A	31	69
+596	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ta Vie	N/A	31	69
+597	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Temporis	N/A	14	37
+598	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tempura Matsui	10158	35	109
+599	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tenku RyuGin	N/A	35	69
+600	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Texture	W1H 7BY	15	99
+601	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Araki	W1S 3BF	35	100
+602	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Cellar	KY10 3AA	46	4
+603	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Checkers	SY15 6PN	23	103
+604	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Clocktower	10010	14	109
+605	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Clove Club	EC1V 9LT	46	152
+606	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Coach	SL7 2LS	45	98
+607	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Cross at Kenilworth	CV8 2EZ	12	76
+608	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Dabney	20001	1	173
+609	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Dining Room	SN16 0RB	4	96
+610	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Eight	N/A	11	94
+611	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Finch	11238	1	109
+612	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The French Laundry	94599	14	137
+613	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Glasshouse	TW9 3PZ	46	78
+614	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Golden Peacock	N/A	30	94
+615	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Guest House	110	56	164
+616	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Inn at Little Washington	22747	1	173
+617	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Kitchen	N/A	59	94
+618	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Kitchen	95825	14	132
+619	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Man Behind The Curtain	LS1 7JH	15	83
+620	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Modern	10019	14	109
+621	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Musket Room	10012	14	109
+622	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Neptune	PE36 6HZ	46	71
+623	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Ninth	W1T 2NB	42	23
+624	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Ocean	N/A	23	69
+625	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Peat Inn	KY15 5LH	12	117
+626	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Progress	94115	8	137
+627	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Restaurant at Meadowood	94574	14	137
+628	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The River Café	11201	14	109
+629	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Song of India	N/A	30	154
+630	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Sportsman	CT5 4BP	45	149
+631	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Square	W1J 6PU	17	100
+632	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Tasting Room	N/A	24	94
+633	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Village Pub	94062	14	137
+634	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	The Whitebrook	NP25 4TX	45	176
+635	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Thomas Carr @ The Olive Room	EX34 9DJ	53	74
+636	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Thörnströms Kök	411 32	12	59
+637	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tian	1010	69	177
+638	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tien Hsiang Lo	110	28	164
+639	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tim's Kitchen	N/A	9	94
+640	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tim Allen's Flitch of Bacon	CM6 3HT	45	87
+641	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tim Ho Wan (Sham Shui Po)	N/A	19	69
+642	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tin Lung Heen	N/A	9	69
+643	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ti Trin Ned	7000	46	56
+644	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Topolobampo	60654	43	37
+645	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tosca	N/A	33	69
+646	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Trinity	SW4 0JG	46	42
+647	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Trishna	W1U 3DG	30	99
+648	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Trois Mec	90028	14	91
+649	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tudor Room	TW20 9UR	46	52
+650	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tuju	001	\N	147
+651	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tuome	10009	26	109
+652	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Tyddyn Llan	LL21 OST	12	89
+653	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Umu	W1J 6LX	35	100
+654	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Uncle Boons	10012	66	109
+655	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Upper House	402 26	15	59
+656	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Upstairs at Mikkeller	N/A	31	13
+657	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Urasawa	90210	35	91
+658	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Varoulko Seaside	185 33	53	6
+659	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	VEA	N/A	31	69
+660	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Veeraswamy	W1B 4RS	30	100
+661	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Vespertine	90232	14	91
+662	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Vollmers	21133	15	97
+663	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Volt	114 48	15	161
+664	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Wako	94118	35	137
+665	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Waku Ghin	N/A	36	154
+666	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Wakuriya	94402	35	137
+667	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Wallsé	10014	6	109
+668	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Walnut Tree	NP7 8AW	45	88
+669	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Walter Bauer	1010	12	177
+670	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Waterside Inn	SL6 2AT	13	25
+671	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	West House	TN27 8AH	45	19
+672	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Whitegrass	N/A	5	154
+673	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	White Swan	BB12 9QA	45	53
+674	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Wild Honey Inn	N/A	12	86
+675	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	wilks	BS6 6PG	45	26
+676	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Wing Lei	N/A	9	94
+677	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Winteringham Fields	DN15 9ND	46	179
+678	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Woodspeen	RG20 8BN	46	107
+679	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Xin Rong Ji	N/A	63	69
+680	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ya Ge	110	9	164
+681	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Yan Toh Heen	N/A	9	69
+682	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Yat Lok	N/A	10	69
+683	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Yat Tung Heen (Jordan)	N/A	9	69
+684	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Yauatcha Soho	W1F 0DL	11	156
+685	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Yee Tung Heen	N/A	9	69
+686	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Yè Shanghai (Tsim Sha Tsui)	N/A	54	69
+687	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ying	N/A	9	94
+688	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ying Jee Club	N/A	9	69
+689	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Ynyshir	SY20 8TA	15	95
+690	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Yorke Arms	HG3 5RL	46	116
+691	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Yu Yuan	N/A	11	150
+692	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Zero Complex	N/A	31	150
+693	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Zhejiang Heen	N/A	54	69
+694	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	Zi Yat Heen	N/A	9	94
+695	1	1900-01-01 00:00:00	2199-12-31 23:59:59.999	ZZ's Clam Bar	10012	53	109
+\.
+
+
+--
+-- Data for Name: ft_awards; Type: TABLE DATA; Schema: datawarehouse; Owner: admin
+--
+
+COPY datawarehouse.ft_awards (award_year, award_price, award_grade, award_restaurant_sk) FROM stdin;
+2019	$$$$$	one	288
+2019	$$$$$	one	454
+2019	$$$$$	one	171
+2019	$$$$$	one	100
+2019	$$$$	one	158
+2019	$$$$$	one	143
+2019	$$$$$	one	467
+2019	$$$$$	one	669
+2019	$$$$$	one	519
+2019	$$$$$	one	637
+2019	$$$$$	one	12
+2019	$$$$$	one	331
+2019	$$$$	one	114
+2019	$$$	one	468
+2019	$$$	one	361
+2019	$$$	one	633
+2019	$$$$	one	461
+2019	$$$$	one	666
+2019	$$$$	one	585
+2019	$$	one	478
+2019	$$$$	one	377
+2019	$$	one	17
+2019	$$$	one	40
+2019	$$$$	one	428
+2019	$$	one	125
+2019	$$$	one	354
+2019	$$$$	one	66
+2019	$$$$	one	253
+2019	$$$	one	400
+2019	$$$$	one	229
+2019	$$$$	one	32
+2019	$$$	one	490
+2019	$$	one	291
+2019	$$$$	one	386
+2019	$$$$	one	540
+2019	$$$	one	392
+2019	$$$	one	408
+2019	$$$$	one	270
+2019	$$$$	one	284
+2019	$$$	one	626
+2019	$$	one	553
+2019	$$$	one	421
+2019	$$$	one	547
+2019	$$$	one	353
+2019	$$$$	one	290
+2019	$$$	one	543
+2019	$$$$	one	202
+2019	$$$	one	53
+2019	$$$	one	549
+2019	$$$$	one	664
+2019	$$$$	one	360
+2019	$$$$	one	46
+2019	$$$$	one	286
+2019	$$$$	one	325
+2019	$$$	one	82
+2019	$$$$	one	45
+2019	$$$$	one	176
+2019	$$$$	one	618
+2019	$$$$	one	362
+2019	$$$$	one	227
+2019	$$$	one	523
+2019	$$$	one	499
+2019	$$$$	one	147
+2019	$$$	one	283
+2019	$$$$	one	136
+2019	$$$$	one	417
+2019	$$$$	one	527
+2019	$$$$	one	376
+2019	$$$$	one	396
+2019	$$$$	one	648
+2019	$$$	one	435
+2019	$$$	one	278
+2019	$$$$	one	332
+2019	$$$$	one	474
+2019	$$$$	one	518
+2019	$$$$	one	230
+2019	$$	one	67
+2019	$$$$	one	434
+2019	$$$	one	589
+2019	$$$$	one	224
+2019	$$$$	one	11
+2019	$$	one	444
+2019	$$$$	one	210
+2019	$$$$	one	165
+2019	$$$$	one	164
+2019	$$$	one	52
+2019	$$$$	one	512
+2019	$$$$	one	597
+2019	$$$	one	168
+2019	$$$$	one	166
+2019	$$	one	156
+2019	$$$	one	496
+2019	$$$	one	79
+2019	$$$	one	68
+2019	$$$	one	515
+2019	$$$	one	415
+2019	$$$$	one	172
+2019	$$$$	one	644
+2019	$$$$	one	545
+2019	$$$$$	one	394
+2019	$$$$$	one	153
+2019	$$$$$	one	411
+2019	$$$$$	one	450
+2019	$$$$$	one	4
+2019	$$$$$	one	181
+2019	$$$$$	one	321
+2019	$$$	one	204
+2019	$$$	one	151
+2019	$$$	one	561
+2019	$$$$	one	191
+2019	$$$	one	385
+2019	$$$	one	643
+2019	$$$$	one	535
+2019	$$	one	586
+2019	$$$	one	267
+2019	$$	one	482
+2019	$$	one	287
+2019	$$	one	187
+2019	$$$	one	301
+2019	$$$$	one	121
+2019	$$	one	367
+2019	$$$$	one	304
+2019	$$$	one	559
+2019	$$$	one	1
+2019	$$	one	170
+2019	$$$	one	25
+2019	$$$	one	192
+2019	$$$$	one	273
+2019	$$$	one	38
+2019	$$$	one	218
+2019	$$$	one	146
+2019	$$$	one	426
+2019	$$$	one	442
+2019	$$$	one	431
+2019	$$$$$	one	81
+2019	$$$$$	one	658
+2019	$$$$$	one	243
+2019	$$	one	347
+2019	$	one	340
+2019	$	one	641
+2019	$	one	341
+2019	$$$	one	388
+2019	$$	one	683
+2019	$$	one	193
+2019	$$$	one	517
+2019	$$	one	252
+2019	$$	one	15
+2019	$$$$	one	480
+2019	$$$	one	548
+2019	$$	one	249
+2019	$$$$$	one	582
+2019	$$$	one	645
+2019	$$$	one	0
+2019	$$	one	685
+2019	$	one	686
+2019	$	one	238
+2019	$$	one	258
+2019	$$	one	693
+2019	$$$$$	one	593
+2019	$	one	279
+2019	$	one	443
+2019	$$$	one	679
+2019	$	one	473
+2019	$$$$	one	366
+2019	$$$	one	563
+2019	$$$	one	422
+2019	$$$$$	one	659
+2019	$$$$	one	363
+2019	$	one	682
+2019	$$$	one	219
+2019	$$	one	106
+2019	$$$	one	583
+2019	$$$	one	37
+2019	$$$	one	155
+2019	$$	one	58
+2019	$$	one	407
+2019	$$$$$	one	276
+2019	$$$	one	60
+2019	$$$$$	one	595
+2019	$$$$$	one	624
+2019	$$$$	one	130
+2019	$$$$	one	80
+2019	$$$	one	551
+2019	$$$$$	one	49
+2019	$$$$$	one	129
+2019	$$$	one	617
+2019	$$	one	639
+2019	$$	one	676
+2019	$	one	289
+2019	$$	one	687
+2019	$$$$	one	522
+2019	$	one	614
+2019	$$	one	694
+2019	$$$	one	5
+2019	$$$	one	448
+2019	$$	one	323
+2019	$$$$	one	175
+2019	$$$$	one	133
+2019	$$$$	one	483
+2019	$$$$	one	502
+2019	$$$	one	197
+2019	$$$	one	306
+2019	$$$$	one	554
+2019	$$$$	one	145
+2019	$$$$	one	338
+2019	$$$$	one	312
+2019	$$$$	one	424
+2019	$$$$	one	667
+2019	$$	one	261
+2019	$$$$	one	574
+2019	$$$$	one	307
+2019	$$$$	one	56
+2019	$$$	one	237
+2019	$$$$	one	75
+2019	$$$$	one	695
+2019	$$$$	one	48
+2019	$$$$	one	99
+2019	$$$	one	333
+2019	$$$$	one	20
+2019	$$$	one	131
+2019	$$$	one	83
+2019	$$$$	one	213
+2019	$$$	one	409
+2019	$$$$	one	271
+2019	$$$$	one	413
+2019	$$$	one	621
+2019	$$	one	654
+2019	$$$$	one	410
+2019	$$$$	one	214
+2019	$$$	one	604
+2019	$$$$	one	16
+2019	$$$	one	104
+2019	$$$	one	262
+2019	$$$$	one	628
+2019	$$$$	one	55
+2019	$$	one	92
+2019	$$$	one	280
+2019	$$$$	one	126
+2019	$$$$	one	44
+2019	$$$	one	310
+2019	$$$	one	277
+2019	$$$$	one	13
+2019	$$$$	one	105
+2019	$$	one	651
+2019	$$$$	one	598
+2019	$$$$	one	584
+2019	$$$$	one	568
+2019	$$$$	one	91
+2019	$$	one	118
+2019	$$$$	one	509
+2019	$$$$	one	576
+2019	$$$$	one	572
+2019	$$$	one	378
+2019	$$	one	102
+2019	$$$$	one	452
+2019	$$$	one	440
+2019	$$$	one	611
+2019	$$	one	177
+2019	$$$$$	one	514
+2019	$$$$	one	41
+2019	N/A	one	33
+2019	N/A	one	348
+2019	N/A	one	674
+2019	N/A	one	112
+2019	N/A	one	383
+2019	N/A	one	244
+2019	N/A	one	108
+2019	N/A	one	216
+2019	N/A	one	316
+2019	N/A	one	94
+2019	N/A	one	233
+2019	N/A	one	322
+2019	N/A	one	239
+2019	$$$$$	one	427
+2019	$$$$$	one	324
+2019	$$$$$	one	436
+2019	$$$$$	one	379
+2019	$$$$$	one	116
+2019	$$$$$	one	272
+2019	$$$$$	one	364
+2019	$$$$$	one	173
+2019	$$$$$	one	455
+2019	$$$	one	308
+2019	$$$$$	one	500
+2019	$$$$$	one	594
+2019	$$$$$	one	292
+2019	$$$$$	one	281
+2019	$$$$$	one	242
+2019	$$$	one	555
+2019	$$$$	one	336
+2019	$$$	one	226
+2019	$$$	one	148
+2019	$$$	one	174
+2019	$$$	one	152
+2019	$$$	one	266
+2019	$$	one	51
+2019	$$$	one	403
+2019	$$$	one	311
+2019	$$$	one	691
+2019	$$$	one	65
+2019	$$$$$	one	398
+2019	$$$	one	465
+2019	$$$	one	538
+2019	$$$	one	588
+2019	$$$	one	692
+2019	$	one	264
+2019	$$$$	one	212
+2018	$	one	235
+2018	$	one	472
+2018	$$$	one	111
+2018	$	one	201
+2018	$$	one	565
+2018	$$	one	520
+2018	$	one	629
+2018	$	one	339
+2018	$$	one	672
+2018	$$$	one	255
+2018	$$	one	319
+2018	$$$	one	137
+2018	$	one	23
+2018	$$	one	62
+2018	$	one	135
+2018	$	one	250
+2018	$$	one	504
+2018	$$$	one	571
+2018	$$$$	one	573
+2018	$$$	one	246
+2018	$$	one	84
+2018	$$$	one	263
+2018	$$	one	50
+2018	$$$$	one	521
+2018	$$	one	128
+2018	$	one	564
+2018	$	one	109
+2018	$	one	416
+2018	$	one	346
+2018	$$	one	89
+2018	$	one	489
+2018	$$	one	380
+2018	$	one	359
+2018	$	one	96
+2019	$$$	one	64
+2019	$$$	one	300
+2019	$$$	one	3
+2019	$$$	one	534
+2019	$$$	one	636
+2019	$$$$	one	655
+2019	$$$$	one	14
+2019	$$$	one	580
+2019	$$$	one	663
+2019	$$$	one	160
+2019	$$$$	one	430
+2019	$$	one	374
+2019	$$$$	one	24
+2019	$$$	one	462
+2019	$$	one	73
+2019	$$$	one	510
+2019	$$	one	209
+2019	$$	one	141
+2019	$$$	one	315
+2019	$$$$	one	297
+2019	$$	one	638
+2019	$$	one	680
+2019	$$$	one	144
+2019	$$$	one	575
+2019	$$$$	one	351
+2019	$$$	one	389
+2019	$$$$	one	285
+2019	$$$$	one	577
+2019	$$$	one	402
+2019	$$$	one	251
+2019	$$	one	352
+2019	$$	one	399
+2019	$	one	142
+2019	$$	one	591
+2019	$	one	560
+2019	$$$$$	one	656
+2019	$$$	one	115
+2019	$$$$	one	488
+2019	$$$$	one	97
+2019	$$$$$	one	76
+2019	$$$	one	550
+2019	$$$$	one	161
+2019	$$$	one	445
+2019	$$$$	one	207
+2019	$$$$$	one	541
+2019	$$$	one	511
+2019	$$	one	508
+2019	$$$$	one	194
+2019	$$	one	381
+2019	$$	one	259
+2019	$$$	one	406
+2019	$$$	one	254
+2019	$$$$	one	501
+2019	$$$$	one	335
+2019	$$	one	498
+2019	$$$$$	one	470
+2019	$$$	one	74
+2019	$$	one	590
+2019	$$$$	one	303
+2019	$$$$	one	581
+2019	$$$$	one	460
+2019	$$$	one	532
+2019	$$	one	87
+2019	$$	one	608
+2019	$$$$	one	382
+2019	$$$	one	293
+2019	$$$$	one	182
+2019	$$$	one	373
+2019	$$	one	497
+2019	N/A	one	350
+2019	N/A	one	85
+2019	N/A	one	159
+2019	N/A	one	438
+2019	N/A	one	625
+2019	N/A	one	296
+2019	N/A	one	370
+2019	N/A	one	418
+2019	N/A	one	2
+2019	N/A	one	602
+2019	N/A	one	186
+2019	N/A	one	241
+2019	N/A	one	494
+2019	N/A	one	240
+2019	N/A	one	544
+2019	N/A	one	414
+2019	N/A	one	690
+2019	N/A	one	189
+2019	N/A	one	673
+2019	N/A	one	652
+2019	N/A	one	689
+2019	N/A	one	71
+2019	N/A	one	529
+2019	N/A	one	552
+2019	N/A	one	619
+2019	N/A	one	603
+2019	N/A	one	459
+2019	N/A	one	183
+2019	N/A	one	677
+2019	N/A	one	635
+2019	N/A	one	668
+2019	N/A	one	447
+2019	N/A	one	530
+2019	N/A	one	471
+2019	N/A	one	10
+2019	N/A	one	437
+2019	N/A	one	101
+2019	N/A	one	449
+2019	N/A	one	265
+2019	N/A	one	634
+2019	N/A	one	257
+2019	N/A	one	154
+2019	N/A	one	607
+2019	N/A	one	372
+2019	N/A	one	506
+2019	N/A	one	330
+2019	N/A	one	206
+2019	N/A	one	223
+2019	N/A	one	675
+2019	N/A	one	88
+2019	N/A	one	103
+2019	N/A	one	441
+2019	N/A	one	464
+2019	N/A	one	609
+2019	N/A	one	90
+2019	N/A	one	484
+2019	N/A	one	425
+2019	N/A	one	357
+2019	N/A	one	622
+2019	N/A	one	162
+2019	N/A	one	439
+2019	N/A	one	419
+2019	N/A	one	397
+2019	N/A	one	481
+2019	N/A	one	69
+2019	N/A	one	678
+2019	N/A	one	606
+2019	N/A	one	134
+2019	N/A	one	318
+2019	N/A	one	236
+2019	N/A	one	70
+2019	N/A	one	375
+2019	N/A	one	132
+2019	N/A	one	649
+2019	N/A	one	613
+2019	N/A	one	326
+2019	N/A	one	640
+2019	N/A	one	492
+2019	N/A	one	295
+2019	N/A	one	647
+2019	N/A	one	495
+2019	N/A	one	349
+2019	N/A	one	600
+2019	N/A	one	466
+2019	N/A	one	228
+2019	N/A	one	456
+2019	N/A	one	623
+2019	N/A	one	275
+2019	N/A	one	463
+2019	N/A	one	222
+2019	N/A	one	631
+2019	N/A	one	26
+2019	N/A	one	61
+2019	N/A	one	221
+2019	N/A	one	537
+2019	N/A	one	198
+2019	N/A	one	404
+2019	N/A	one	368
+2019	N/A	one	503
+2019	N/A	one	120
+2019	N/A	one	684
+2019	N/A	one	107
+2019	N/A	one	220
+2019	N/A	one	28
+2019	N/A	one	453
+2019	N/A	one	660
+2019	N/A	one	54
+2019	N/A	one	234
+2019	N/A	one	491
+2019	N/A	one	167
+2019	N/A	one	516
+2019	N/A	one	248
+2019	N/A	one	35
+2019	N/A	one	184
+2019	N/A	one	149
+2019	N/A	one	557
+2019	N/A	one	475
+2019	N/A	one	122
+2019	N/A	one	7
+2019	N/A	one	605
+2019	N/A	one	344
+2019	N/A	one	31
+2019	N/A	one	86
+2019	N/A	one	356
+2019	N/A	one	199
+2019	N/A	one	117
+2019	N/A	one	320
+2019	N/A	one	558
+2019	N/A	one	646
+2019	N/A	one	113
+2019	N/A	one	542
+2019	N/A	one	487
+2019	N/A	one	215
+2019	N/A	one	630
+2019	N/A	one	671
+2019	N/A	one	185
+2019	N/A	one	507
+2019	N/A	one	77
+2019	$$$$$	two	513
+2019	$$$$$	two	247
+2019	$$$$$	two	401
+2019	$$$$$	two	305
+2019	$$$$$	two	528
+2019	$$$$$	two	556
+2019	$$$$	two	57
+2019	$$$$	two	124
+2019	$$$$	two	93
+2019	$$$$	two	328
+2019	$$$$	two	505
+2019	$$$$	two	95
+2019	$$$$	two	123
+2019	$$$$	two	9
+2019	$$$$	two	657
+2019	$$$$	two	569
+2019	$$$$	two	539
+2019	$$$$	two	469
+2019	$$$$	two	405
+2019	$$$$	two	661
+2019	$$$$	two	536
+2019	$$$$	two	432
+2019	$$$$	two	8
+2019	$$$$	two	302
+2019	$$$	two	232
+2019	$$$$	two	47
+2019	$$$$	two	412
+2019	$$$$	two	274
+2019	$$$$$	two	546
+2019	$$	two	566
+2019	$$$	two	681
+2019	$$$	two	642
+2019	$$$$$	two	599
+2019	$$	two	188
+2019	$$$$$	two	578
+2019	$$$$	two	457
+2019	$$	two	688
+2019	$$$	two	157
+2019	$$$$$	two	596
+2019	$$$$	two	29
+2019	$$$$	two	282
+2019	$$$$$	two	429
+2019	$	two	180
+2019	$$	two	208
+2019	$$	two	393
+2019	$$$	two	632
+2019	$$$$$	two	18
+2019	$$$$	two	314
+2019	$$$$	two	268
+2019	$$$$	two	43
+2019	$$$$	two	260
+2019	$$$$	two	369
+2019	$$$$	two	195
+2019	$$$$	two	245
+2019	$$$$	two	570
+2019	$$$$	two	298
+2019	$$$$	two	620
+2019	$$$$	two	34
+2019	$$$$	two	139
+2019	$$$$	two	39
+2019	$$$$	two	72
+2019	N/A	two	446
+2019	$$$$$	two	433
+2019	$$$$$	two	650
+2019	$$$$$	two	138
+2019	$$$$$	two	299
+2019	$$$	two	269
+2019	$$$	two	309
+2019	$$$	two	390
+2019	$$$	two	22
+2018	$$$$$	two	665
+2018	$$$$	two	423
+2018	$$$$$	two	525
+2018	$	two	524
+2018	$$$	two	345
+2019	$$$$	two	179
+2019	$$$$	two	203
+2019	$$$$	two	420
+2019	$$$$	two	662
+2019	$$$$	two	140
+2019	$$$	two	479
+2019	$$$$	two	526
+2019	$$$	two	592
+2019	$$$$	two	567
+2019	$$	two	615
+2019	$$$$$	two	196
+2019	$$$$	two	562
+2019	$$$$$	two	384
+2019	$$$$	two	342
+2019	$$$$	two	391
+2019	$$$$	two	458
+2019	N/A	two	30
+2019	N/A	two	317
+2019	N/A	two	477
+2019	N/A	two	395
+2019	N/A	two	486
+2019	N/A	two	485
+2019	N/A	two	59
+2019	N/A	two	387
+2019	N/A	two	225
+2019	N/A	two	334
+2019	N/A	two	127
+2019	N/A	two	337
+2019	N/A	two	294
+2019	N/A	two	231
+2019	N/A	two	150
+2019	N/A	two	653
+2019	N/A	two	533
+2019	N/A	two	217
+2019	N/A	two	119
+2019	$$$$$	three	27
+2019	$$$$	three	365
+2019	$$$$	three	63
+2019	$$$$	three	476
+2019	$$$$	three	42
+2019	$$$$	three	612
+2019	$$$$	three	627
+2019	$$$$	three	531
+2019	$$$$	three	21
+2019	$$$$	three	205
+2019	$$$	three	587
+2019	$$$$$	three	78
+2019	$$$$	three	355
+2019	$$$$	three	98
+2019	$$$$	three	6
+2019	$$$$	three	313
+2019	$$$$$	three	579
+2019	$$$	three	610
+2019	$$$$	three	493
+2019	$$	three	256
+2019	$$$$	three	358
+2019	$$$$	three	371
+2019	$$$$	three	451
+2019	$$$$	three	329
+2019	$$$$	three	163
+2019	$$$$	three	110
+2019	$$$$	three	327
+2019	$$$$$	three	200
+2019	$$$$	three	190
+2019	$$	three	343
+2019	$$$$	three	616
+2019	N/A	three	178
+2019	N/A	three	670
+2019	N/A	three	19
+2019	N/A	three	601
+2019	N/A	three	211
+\.
+
+
+--
+-- Data for Name: onestar; Type: TABLE DATA; Schema: staging; Owner: admin
+--
+
+COPY staging.onestar (name, year, latitude, longitude, city, region, zipcode, cuisine, price, url) FROM stdin;
+Kilian Stuba	2019	47	10	Kleinwalsertal	Austria	87568	Creative	$$$$$	https://guide.michelin.com/at/en/vorarlberg/kleinwalsertal/restaurant/kilian-stuba
+Pfefferschiff	2019	48	13	Hallwang	Austria	5300	Classic cuisine	$$$$$	https://guide.michelin.com/at/en/salzburg-region/hallwang/restaurant/pfefferschiff
+Esszimmer	2019	48	13	Salzburg	Austria	5020	Creative	$$$$$	https://guide.michelin.com/at/en/salzburg-region/salzburg/restaurant/esszimmer
+Carpe Diem	2019	48	13	Salzburg	Austria	5020	Market cuisine	$$$$$	https://guide.michelin.com/at/en/salzburg-region/salzburg/restaurant/carpe-diem
+Edvard	2019	48	16	Wien	Austria	1010	Modern cuisine	$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/edvard
+Das Loft	2019	48	16	Wien	Austria	1020	Modern cuisine	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/das-loft
+Pramerl & the Wolf	2019	48	16	Wien	Austria	1090	Creative	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/pramerl-the-wolf
+Walter Bauer	2019	48	16	Wien	Austria	1010	Classic cuisine	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/walter-bauer
+SHIKI	2019	48	16	Wien	Austria	1010	Japanese	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/shiki
+Tian	2019	48	16	Wien	Austria	1010	Vegetarian	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/tian
+aend	2019	48	16	Wien	Austria	1010	Modern cuisine	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/aend
+Le Ciel by Toni Mörwald	2019	48	16	Wien	Austria	1010	Classic cuisine	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/le-ciel-by-toni-morwald
+Chez TJ	2019	37	-122	South San Francisco	California	94041	Contemporary	$$$$	https://guide.michelin.com/us/en/california/south-san-francisco/restaurant/chez-tj
+Protégé	2019	37	-122	South San Francisco	California	94301	Contemporary	$$$	https://guide.michelin.com/us/en/california/south-san-francisco/restaurant/protege
+Madera	2019	37	-122	San Francisco	California	94025	Contemporary	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/madera
+The Village Pub	2019	37	-122	San Francisco	California	94062	Contemporary	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/the-village-pub
+Plumed Horse	2019	37	-122	South San Francisco	California	95070	Contemporary	$$$$	https://guide.michelin.com/us/en/california/south-san-francisco/restaurant/plumed-horse
+Wakuriya	2019	38	-122	San Francisco	California	94402	Japanese	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/wakuriya
+Sushi Yoshizumi	2019	38	-122	San Francisco	California	94401	Japanese	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/sushi-yoshizumi
+Rasa	2019	38	-122	San Francisco	California	94010	Indian	$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/rasa
+Maum	2019	38	-122	South San Francisco	California	94101	Korean	$$$$	https://guide.michelin.com/us/en/california/south-san-francisco/restaurant/maum
+Al's Place	2019	38	-122	San Francisco	California	94110	Californian	$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/al-s-place
+Aster	2019	38	-122	San Francisco	California	94110	Californian	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/aster
+Omakase	2019	38	-122	San Francisco	California	94103	Japanese	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/omakase
+Commonwealth	2019	38	-122	San Francisco	California	94110	Contemporary	$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/commonwealth
+Luce	2019	38	-122	San Francisco	California	94103	Contemporary	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/luce
+Birdsong	2019	38	-122	San Francisco	California	94101	American	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/birdsong
+In Situ	2019	38	-122	San Francisco	California	94103	International	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/in-situ
+Mourad	2019	38	-122	San Francisco	California	94105	Moroccan	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/mourad
+Hashiri	2019	38	-122	San Francisco	California	94103	Japanese	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/hashiri
+Angler	2019	38	-122	San Francisco	California	94101	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/angler
+Rich Table	2019	38	-122	San Francisco	California	94102	Contemporary	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/rich-table
+Kin Khao	2019	38	-122	San Francisco	California	94102	Thai	$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/kin-khao
+Michael Mina	2019	38	-122	San Francisco	California	94102	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/michael-mina
+Sons & Daughters	2019	38	-122	San Francisco	California	94108	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/sons-daughters
+Mister Jiu's	2019	38	-122	San Francisco	California	94108	Chinese	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/mister-jius
+Nico	2019	38	-122	San Francisco	California	94101	Contemporary	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/nico
+jū-ni	2019	38	-122	San Francisco	California	94117	Japanese	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/ju-ni
+Keiko à Nob Hill	2019	38	-122	San Francisco	California	94109	Fusion	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/keiko-a-nob-hill
+The Progress	2019	38	-122	San Francisco	California	94115	Californian	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/the-progress
+State Bird Provisions	2019	38	-122	San Francisco	California	94115	American	$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/state-bird-provisions
+Octavia	2019	38	-122	San Francisco	California	94109	Californian	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/octavia
+SPQR	2019	38	-122	San Francisco	California	94115	Italian	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/spqr
+Lord Stanley	2019	38	-122	San Francisco	California	94109	Californian	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/lord-stanley
+Kinjo	2019	38	-122	San Francisco	California	94109	Japanese	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/kinjo
+Sorrel	2019	38	-122	San Francisco	California	94101	Californian	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/sorrel
+Gary Danko	2019	38	-122	San Francisco	California	94109	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/gary-danko
+Bar Crenn	2019	38	-122	San Francisco	California	94101	French	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/bar-crenn
+Spruce	2019	38	-122	San Francisco	California	94118	Californian	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/spruce
+Wako	2019	38	-122	San Francisco	California	94118	Japanese	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/wako
+Madcap	2019	38	-123	San Francisco	California	94960	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/madcap
+Aubergine	2019	37	-122	Monterey	California	93921	Contemporary	$$$$	https://guide.michelin.com/us/en/california/monterey/restaurant/aubergine
+Kenzo	2019	38	-122	San Francisco	California	94559	Japanese	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/kenzo
+La Toque	2019	38	-122	San Francisco	California	94573	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/la-toque
+Bouchon	2019	38	-122	San Francisco	California	94599	French	$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/bouchon
+Auberge du Soleil	2019	38	-122	San Francisco	California	94573	Californian	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/auberge-du-soleil
+Farmhouse Inn & Restaurant	2019	38	-123	San Francisco	California	95436	Californian	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/farmhouse-inn-restaurant
+The Kitchen	2019	39	-121	Sacramento	California	95825	Contemporary	$$$$	https://guide.michelin.com/us/en/california/us-sacramento/restaurant/the-kitchen559371
+Madrona Manor	2019	39	-123	San Francisco	California	95448	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/madrona-manor
+Harbor House	2019	39	-124	San Francisco	California	N/A	Californian	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/harbor-house
+Shin Sushi	2019	34	-118	Los Angeles	California	91436	Japanese	$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/shin-sushi
+Rustic Canyon	2019	34	-118	Los Angeles	California	90401	Californian	$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/rustic-canyon
+Dialogue	2019	34	-118	Los Angeles	California	90401	Contemporary	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/dialogue
+Kato	2019	34	-118	Los Angeles	California	90025	Asian	$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/kato
+CUT	2019	34	-118	Los Angeles	California	90212	Steakhouse	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/cut559418
+Nozawa Bar	2019	34	-118	Los Angeles	California	90210	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/nozawa-bar
+Shunji	2019	34	-118	Los Angeles	California	90064	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/shunji
+Maude	2019	34	-118	Los Angeles	California	90212	Contemporary	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/maude
+Mori Sushi	2019	34	-118	Los Angeles	California	90064	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/mori-sushi
+Trois Mec	2019	34	-118	Los Angeles	California	90028	Contemporary	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/trois-mec
+Osteria Mozza	2019	34	-118	Los Angeles	California	90028	Italian	$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/osteria-mozza
+Kali	2019	34	-118	Los Angeles	California	90028	Californian	$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/kali
+Le Comptoir	2019	34	-118	Los Angeles	California	90020	Californian	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/le-comptoir
+Q Sushi	2019	34	-118	Los Angeles	California	90017	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/q-sushi
+Shibumi	2019	34	-118	Los Angeles	California	90014	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/shibumi559644
+Hayato	2019	34	-118	Los Angeles	California	90001	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/hayato
+Bistro Na's	2019	34	-118	Los Angeles	California	91780	Chinese	$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/bistro-na-s
+Orsa & Winston	2019	34	-118	Los Angeles	California	90013	Fusion	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/orsa-winston
+Taco María	2019	34	-118	Costa Mesa	California	92626	Mexican	$$$	https://guide.michelin.com/us/en/california/us-costa-mesa/restaurant/taco-maria
+Hana re	2019	34	-118	Costa Mesa	California	92626	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-costa-mesa/restaurant/hana-re
+Addison	2019	33	-117	San Diego	California	92130	Contemporary	$$$$	https://guide.michelin.com/us/en/california/us-san-diego/restaurant/addison
+Parachute	2019	42	-88	Chicago	Chicago	60618	Fusion	$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/parachute
+Goosefoot	2019	42	-88	Chicago	Chicago	60625	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/goosefoot
+Elizabeth	2019	42	-88	Chicago	Chicago	60625	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/elizabeth
+EL Ideas	2019	42	-88	Chicago	Chicago	60618	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/el-ideas
+Band of Bohemia	2019	42	-88	Chicago	Chicago	60640	Gastropub	$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/band-of-bohemia
+Schwa	2019	42	-88	Chicago	Chicago	60662	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/schwa
+Temporis	2019	42	-88	Chicago	Chicago	N/A	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/temporis
+Entente	2019	42	-88	Chicago	Chicago	60657	Contemporary	$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/entente
+Elske	2019	42	-88	Chicago	Chicago	60607	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/elske
+Dusek's (Board & Beer)	2019	42	-88	Chicago	Chicago	60608	Gastropub	$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/dusek-s-board-beer
+Roister	2019	42	-88	Chicago	Chicago	60607	Contemporary	$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/roister
+Boka	2019	42	-88	Chicago	Chicago	60614	Contemporary	$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/boka
+Blackbird	2019	42	-88	Chicago	Chicago	60661	Contemporary	$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/blackbird
+Sepia	2019	42	-88	Chicago	Chicago	60661	American	$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/sepia
+North Pond	2019	42	-88	Chicago	Chicago	60614	Contemporary	$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/north-pond
+Everest	2019	42	-88	Chicago	Chicago	60605	French	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/everest
+Topolobampo	2019	42	-88	Chicago	Chicago	60654	Mexican	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/topolobampo
+Spiaggia	2019	42	-88	Chicago	Chicago	60611	Italian	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/spiaggia
+Monte	2019	45	14	Rovinj	Croatia	52210	Creative	$$$$$	https://guide.michelin.com/hr/en/istria/rovinj/restaurant/monte
+Draga di Lovrana	2019	45	14	Lovran	Croatia	51415	Modern cuisine	$$$$$	https://guide.michelin.com/hr/en/primorje-gorski-kotar/lovran/restaurant/draga-di-lovrana
+Noel	2019	46	16	Zagreb	Croatia	10000	Modern cuisine	$$$$$	https://guide.michelin.com/hr/en/zagreb-region/zagreb/restaurant/noel
+Pelegrini	2019	44	16	Šibenik	Croatia	22000	Modern cuisine	$$$$$	https://guide.michelin.com/hr/en/sibenik-knin/sibenik/restaurant/pelegrini
+360º	2019	43	18	Dubrovnik	Croatia	20000	Modern cuisine	$$$$$	https://guide.michelin.com/hr/en/dubrovnik-neretva/dubrovnik/restaurant/360%C2%BA
+Field	2019	50	14	Praha	Czech Republic	110 00	Modern cuisine	$$$$$	https://guide.michelin.com/cz/en/prague/praha/restaurant/field
+La Degustation Bohême Bourgeoise	2019	50	14	Praha	Czech Republic	110 00	Modern cuisine	$$$$$	https://guide.michelin.com/cz/en/prague/praha/restaurant/la-degustation-boheme-bourgeoise
+Gastromé	2019	56	10	Aarhus	Denmark	8000	Modern cuisine	$$$	https://guide.michelin.com/dk/en/central-denmark/aarhus/restaurant/gastrome
+Domestic	2019	56	10	Aarhus	Denmark	8000	Modern cuisine	$$$	https://guide.michelin.com/dk/en/central-denmark/aarhus/restaurant/domestic
+Substans	2019	56	10	Aarhus	Denmark	8000	Modern cuisine	$$$	https://guide.michelin.com/dk/en/central-denmark/aarhus/restaurant/substans
+Frederikshøj	2019	56	10	Aarhus	Denmark	8000	Creative	$$$$	https://guide.michelin.com/dk/en/central-denmark/aarhus/restaurant/frederikshoj
+Me‚Mu	2019	56	10	Vejle	Denmark	7100	Modern cuisine	$$$	https://guide.michelin.com/dk/en/vejle/restaurant/me%E2%80%9Amu
+Ti Trin Ned	2019	56	10	Fredericia	Denmark	7000	Modern cuisine	$$$	https://guide.michelin.com/dk/en/southern-denmark/fredericia/restaurant/ti-trin-ned
+Slotskøkkenet	2019	56	11	Hørve	Denmark	4534	Creative	$$$$	https://guide.michelin.com/dk/en/zealand/horve/restaurant/slotskokkenet
+Søllerød Kro	2019	56	12	København	Denmark	2840	Modern cuisine	$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/sollerod-kro
+Jordnær	2019	56	13	København	Denmark	2820	Danish	$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/jordnaer
+Relæ	2019	56	13	København	Denmark	2200 N	Modern cuisine	$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/relae
+Kiin Kiin	2019	56	13	København	Denmark	2200 N	Thai	$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/kiin-kiin
+formel B	2019	56	13	København	Denmark	1800 C	Modern cuisine	$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/formel-b
+Kokkeriet	2019	56	13	København	Denmark	1306 K	Modern cuisine	$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/kokkeriet
+Clou	2019	56	13	København	Denmark	2100 K	Modern cuisine	$$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/clou
+Marchal	2019	56	13	København	Denmark	1050 K	Modern cuisine	$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/marchal
+Kong Hans Kælder	2019	56	13	København	Denmark	1070 K	Classic French	$$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/kong-hans-kaelder
+Stud!o at The Standard	2019	56	13	København	Denmark	1058 K	Creative	$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/stud-o-at-the-standard
+108	2019	56	13	København	Denmark	1401 K	Modern cuisine	$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/108
+Era Ora	2019	56	13	København	Denmark	1414 K	Italian	$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/era-ora
+Alouette	2019	56	13	København	Denmark	2300 S	Modern cuisine	$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/alouette
+Frederiksminde	2019	55	12	Præstø	Denmark	4720	Creative	$$$	https://guide.michelin.com/dk/en/zealand/praesto/restaurant/frederiksminde
+Kadeau Bornholm	2019	55	15	Pedersker	Denmark	3720	Creative	$$$$	https://guide.michelin.com/dk/en/capital-region/pedersker/restaurant/kadeau-bornholm
+Ask	2019	60	25	Helsingfors / Helsinki	Finland	00170	Modern cuisine	$$$	https://guide.michelin.com/fi/en/uusimaa/helsingfors-helsinki/restaurant/ask
+Grön	2019	60	25	Helsingfors / Helsinki	Finland	00180	Finnish	$$$	https://guide.michelin.com/fi/en/uusimaa/helsingfors-helsinki/restaurant/gron
+Demo	2019	60	25	Helsingfors / Helsinki	Finland	00120	Modern cuisine	$$$	https://guide.michelin.com/fi/en/uusimaa/helsingfors-helsinki/restaurant/demo
+Olo	2019	60	25	Helsingfors / Helsinki	Finland	00170	Modern cuisine	$$$	https://guide.michelin.com/fi/en/uusimaa/helsingfors-helsinki/restaurant/olo
+Palace	2019	60	25	Helsingfors / Helsinki	Finland	00130	Modern cuisine	$$$	https://guide.michelin.com/fi/en/uusimaa/helsingfors-helsinki/restaurant/palace
+Ora	2019	60	25	Helsingfors / Helsinki	Finland	00150	Modern cuisine	$$$	https://guide.michelin.com/fi/en/uusimaa/helsingfors-helsinki/restaurant/ora
+Botrini's	2019	38	24	Athína	Greece	152 33	Mediterranean	$$$$$	https://guide.michelin.com/gr/en/attica/athina/restaurant/botrini-s
+Varoulko Seaside	2019	38	24	Athína	Greece	185 33	Seafood	$$$$$	https://guide.michelin.com/gr/en/attica/athina/restaurant/varoulko-seaside
+Hytra	2019	38	24	Athína	Greece	11745	Modern cuisine	$$$$$	https://guide.michelin.com/gr/en/attica/athina/restaurant/hytra
+Loaf On	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/loaf-on
+Lei Garden (Kwun Tong)	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/lei-garden-kwun-tong
+Tim Ho Wan (Sham Shui Po)	2019	22	114	Hong Kong	Hong Kong	N/A	Dim Sum	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/tim-ho-wan-sham-shui-po
+Lei Garden (Mong Kok)	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/lei-garden-mong-kok
+Ming Court	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/ming-court
+Yat Tung Heen (Jordan)	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/yat-tung-heen-jordan
+Fu Ho (Tsim Sha Tsui)	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/fu-ho-tsim-sha-tsui
+Shang Palace	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/shang-palace
+IM Teppanyaki & Wine	2019	22	114	Hong Kong	Hong Kong	N/A	Teppanyaki	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/im-teppanyaki-wine
+Ah Yat Harbour View (Tsim Sha Tsui)	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/ah-yat-harbour-view-tsim-sha-tsui
+Rech	2019	22	114	Hong Kong	Hong Kong	N/A	Seafood	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/rech
+Spring Moon	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/spring-moon
+Imperial Treasure Fine Chinese Cuisine	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/imperial-treasure-fine-chinese-cuisine
+Sushi Tokami	2019	22	114	Hong Kong	Hong Kong	N/A	Sushi	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/sushi-tokami
+Tosca	2019	22	114	Hong Kong	Hong Kong	N/A	Italian	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/tosca352519
+Épure	2019	22	114	\N	Hong Kong	N/A	French	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/epure
+Yee Tung Heen	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/yee-tung-heen
+Yè Shanghai (Tsim Sha Tsui)	2019	22	114	Hong Kong	Hong Kong	N/A	Shanghainese	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/ye-shanghai-tsim-sha-tsui
+Ho Hung Kee	2019	22	114	Hong Kong	Hong Kong	N/A	Noodles and congee	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/ho-hung-kee
+Jardin de Jade (Wan Chai)	2019	22	114	Hong Kong	Hong Kong	N/A	Shanghainese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/jardin-de-jade-wan-chai
+Zhejiang Heen	2019	22	114	Hong Kong	Hong Kong	N/A	Shanghainese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/zhejiang-heen
+Takumi by Daisuke Mori	2019	22	114	Hong Kong	Hong Kong	N/A	Innovative	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/takumi-by-daisuke-mori
+Kam's Roast Goose	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese Roast Meats	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/kam-s-roast-goose
+Pang's Kitchen	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/pang-s-kitchen
+Xin Rong Ji	2019	22	114	Hong Kong	Hong Kong	N/A	Taizhou	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/xin-rong-ji
+Qi (Wan Chai)	2019	22	114	Hong Kong	Hong Kong	N/A	Sichuan	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/qi-wan-chai
+Man Wah	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/man-wah
+Summer Palace	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/summer-palace
+Octavium	2019	22	114	Hong Kong	Hong Kong	N/A	Italian	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/octavium
+Arbor	2019	22	114	\N	Hong Kong	N/A	Innovative	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/arbor
+VEA	2019	22	114	Hong Kong	Hong Kong	N/A	Innovative	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/vea
+Mandarin Grill + Bar	2019	22	114	Hong Kong	Hong Kong	N/A	European contemporary	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/mandarin-grill-bar
+Yat Lok	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese Roast Meats	$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/yat-lok
+Guo Fu Lou	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/guo-fu-lou567828
+Celebrity Cuisine	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/celebrity-cuisine
+Sushi Wadatsumi	2019	22	114	Hong Kong	Hong Kong	N/A	Sushi	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/sushi-wadatsumi
+Arcane	2019	22	114	Hong Kong	Hong Kong	N/A	European contemporary	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/arcane
+Duddell's	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/duddell-s
+Beefbar	2019	22	114	Hong Kong	Hong Kong	N/A	Steakhouse	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/beefbar
+New Punjab Club	2019	22	114	Hong Kong	Hong Kong	N/A	Indian	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/new-punjab-club
+Kaiseki Den by Saotome	2019	22	114	Hong Kong	Hong Kong	N/A	Japanese	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/kaiseki-den-by-saotome
+Belon	2019	22	114	Hong Kong	Hong Kong	N/A	French	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/belon
+Tate	2019	22	114	Hong Kong	Hong Kong	N/A	Innovative	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/tate
+The Ocean	2019	22	114	Hong Kong	Hong Kong	N/A	French	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/the-ocean
+Costes Downtown	2019	48	19	Budapest	Hungary	1051	Modern cuisine	$$$$	https://guide.michelin.com/hu/en/central-hungary/budapest/restaurant/costes-downtown
+Borkonyha Winekitchen	2019	47	19	Budapest	Hungary	1051	Modern cuisine	$$$$	https://guide.michelin.com/hu/en/central-hungary/budapest/restaurant/borkonyha-winekitchen
+Stand	2019	48	19	Budapest	Hungary	1061	Modern cuisine	$$$	https://guide.michelin.com/hu/en/central-hungary/budapest/restaurant/stand
+Babel	2019	47	19	Budapest	Hungary	1052	Modern cuisine	$$$$$	https://guide.michelin.com/hu/en/central-hungary/budapest/restaurant/babel
+Costes	2019	47	19	Budapest	Hungary	1092	Modern cuisine	$$$$$	https://guide.michelin.com/hu/en/central-hungary/budapest/restaurant/costes
+The Kitchen	2019	22	114	Macau	Macau	N/A	Steakhouse	$$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/the-kitchen417810
+Tim's Kitchen	2019	22	114	Macau	Macau	N/A	Cantonese	$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/tim-s-kitchen
+Wing Lei	2019	22	114	Macau	Macau	N/A	Cantonese	$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/wing-lei
+King	2019	22	114	Macau	Macau	N/A	Cantonese	$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/king380226
+Ying	2019	22	114	Macau	Macau	N/A	Cantonese	$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/ying
+Shinji by Kanesaka	2019	22	114	Macau	Macau	N/A	Sushi	$$$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/shinji-by-kanesaka
+The Golden Peacock	2019	22	114	Macau	Macau	N/A	Indian	$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/the-golden-peacock
+Zi Yat Heen	2019	22	114	Macau	Macau	N/A	Cantonese	$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/zi-yat-heen
+8 1/2 Otto e Mezzo - Bombana	2019	22	114	Macau	Macau	N/A	Italian	$$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/8-1-2-otto-e-mezzo-bombana
+Pearl Dragon	2019	22	114	Macau	Macau	N/A	Cantonese	$$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/pearl-dragon
+Lai Heen	2019	22	114	Macau	Macau	N/A	Cantonese	$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/lai-heen
+FAGN	2019	63	10	Trondheim	Norway	7010	Modern cuisine	$$$$	https://guide.michelin.com/no/en/trondelag/trondheim/restaurant/fagn
+Credo	2019	63	10	Trondheim	Norway	7066	Creative	$$$$	https://guide.michelin.com/no/en/trondelag/trondheim/restaurant/credo
+RE-NAA	2019	59	6	Stavanger	Norway	4006	Creative	$$$$	https://guide.michelin.com/no/en/rogaland/stavanger/restaurant/re-naa
+Sabi Omakase	2019	59	6	Stavanger	Norway	4013	Sushi	$$$$	https://guide.michelin.com/no/en/rogaland/stavanger/restaurant/sabi-omakase
+Galt	2019	60	11	Oslo	Norway	0263	Modern cuisine	$$$	https://guide.michelin.com/no/en/oslo-region/oslo/restaurant/galt
+Kontrast	2019	60	11	Oslo	Norway	0178	Scandinavian	$$$	https://guide.michelin.com/no/en/oslo-region/oslo/restaurant/kontrast
+Statholdergaarden	2019	60	11	Oslo	Norway	0151	Classic cuisine	$$$$	https://guide.michelin.com/no/en/oslo-region/oslo/restaurant/statholdergaarden
+Del Posto	2019	41	-74	New York	New York City	10011	Italian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/del-posto
+Le Grill de Joël Robuchon	2019	41	-74	New York	New York City	N/A	French	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/le-grill-de-joel-robuchon
+L'Appart	2019	41	-74	New York	New York City	10281	French	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/l-appart
+Okuda	2019	41	-74	New York	New York City	N/A	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/okuda
+Wallsé	2019	41	-74	New York	New York City	10014	Austrian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/wallse
+Jeju Noodle Bar	2019	41	-74	New York	New York City	10014	Korean	$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/jeju-noodle-bar
+Sushi Nakazawa	2019	41	-74	New York	New York City	10014	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/sushi-nakazawa
+Kosaka	2019	41	-74	New York	New York City	10011	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/kosaka
+Bâtard	2019	41	-74	New York	New York City	10013	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/batard
+Hirohisa	2019	41	-74	New York	New York City	10012	Japanese	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/hirohisa
+Blue Hill	2019	41	-74	New York	New York City	10011	American	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/blue-hill
+ZZ's Clam Bar	2019	41	-74	New York	New York City	10012	Seafood	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/zz-s-clam-bar
+Babbo	2019	41	-74	New York	New York City	10011	Italian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/babbo
+Carbone	2019	41	-74	New York	New York City	10003	Italian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/carbone
+Le Coucou	2019	41	-74	New York	New York City	10013	French	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/le-coucou
+Aldea	2019	41	-74	New York	New York City	10011	Mediterranean	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/aldea
+Cote	2019	41	-74	New York	New York City	10010	Korean	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/cote
+Bouley at Home	2019	41	-74	New York	New York City	N/A	Contemporary	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/bouley-at-home
+Gotham Bar and Grill	2019	41	-74	New York	New York City	10003	American	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/gotham-bar-and-grill
+Nix	2019	41	-74	New York	New York City	10003	Vegetarian	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/nix
+Junoon	2019	41	-74	New York	New York City	10010	Indian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/junoon
+NoMad	2019	41	-74	New York	New York City	10001	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/nomad
+The Musket Room	2019	41	-74	New York	New York City	10012	Contemporary	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/the-musket-room
+Uncle Boons	2019	41	-74	New York	New York City	10012	Thai	$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/uncle-boons
+Noda	2019	41	-74	New York	New York City	N/A	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/noda
+Gramercy Tavern	2019	41	-74	New York	New York City	10003	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/gramercy-tavern
+The Clocktower	2019	41	-74	New York	New York City	10010	Contemporary	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/the-clocktower
+Ai Fiori	2019	41	-74	New York	New York City	10018	Italian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/ai-fiori
+Casa Mono	2019	41	-74	New York	New York City	10003	Spanish	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/casa-mono
+Jewel Bako	2019	41	-74	New York	New York City	10003	Japanese	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/jewel-bako
+The River Café	2019	41	-74	New York	New York City	11201	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/the-river-cafe
+Bar Uchū	2019	41	-74	New York	New York City	10002	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/bar-uchu
+Café China	2019	41	-74	New York	New York City	10016	Chinese	$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/cafe-china
+Kanoyama	2019	41	-74	New York	New York City	10003	Japanese	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/kanoyama
+Contra	2019	41	-74	New York	New York City	10002	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/contra
+Atomix	2019	41	-74	New York	New York City	N/A	Korean	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/atomix
+Kyo Ya	2019	41	-74	New York	New York City	10009	Japanese	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/kyo-ya
+Kajitsu	2019	41	-74	New York	New York City	10016	Japanese	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/kajitsu
+Agern	2019	41	-74	New York	New York City	10017	Scandinavian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/agern
+Caviar Russe	2019	41	-74	New York	New York City	10022	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/caviar-russe
+Tuome	2019	41	-74	New York	New York City	10009	Fusion	$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/tuome
+Tempura Matsui	2019	41	-74	New York	New York City	10158	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/tempura-matsui
+Sushi Yasuda	2019	41	-74	New York	New York City	10017	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/sushi-yasuda
+Sushi Amane	2019	41	-74	New York	New York City	10017	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/sushi-amane
+Café Boulud	2019	41	-74	New York	New York City	10021	French	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/cafe-boulud
+Claro	2019	41	-74	New York	New York City	N/A	Mexican	$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/claro
+Satsuki	2019	41	-74	New York	New York City	10036	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/satsuki
+Sushi Noz	2019	41	-74	New York	New York City	N/A	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/sushi-noz
+Sushi Inoue	2019	41	-74	New York	New York City	10027	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/sushi-inoue
+Meadowsweet	2019	41	-74	New York	New York City	11212	Mediterranean	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/meadowsweet
+Casa Enríque	2019	41	-74	New York	New York City	11101	Mexican	$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/casa-enrique
+Peter Luger	2019	41	-74	New York	New York City	11211	Steakhouse	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/peter-luger
+Oxomoco	2019	41	-74	New York	New York City	11222	Mexican	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/oxomoco
+The Finch	2019	41	-74	New York	New York City	11238	American	$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/the-finch
+Faro	2019	41	-74	New York	New York City	11237	American	$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/faro
+Senses	2019	52	21	Warszawa	Poland	00 085	Modern cuisine	$$$$$	https://guide.michelin.com/pl/en/masovia/warszawa/restaurant/senses
+atelier Amaro	2019	52	21	Warszawa	Poland	00 507	Modern cuisine	$$$$	https://guide.michelin.com/pl/en/masovia/warszawa/restaurant/atelier-amaro
+Aniar	2019	53	-9	Gaillimh/Galway	Ireland	N/A	Creative	N/A	https://guide.michelin.com/ie/en/galway/gaillimh-galway/restaurant/aniar
+Loam	2019	53	-9	Gaillimh/Galway	Ireland	N/A	Creative	N/A	https://guide.michelin.com/ie/en/galway/gaillimh-galway/restaurant/loam
+Wild Honey Inn	2019	53	-9	Lios Dúin Bhearna/Lisdoonvarna	Ireland	N/A	Classic cuisine	N/A	https://guide.michelin.com/ie/en/clare/lios-duin-bhearna-lisdoonvarna/restaurant/wild-honey-inn
+Chestnut	2019	52	-9	Ballydehob	Ireland	N/A	Modern cuisine	N/A	https://guide.michelin.com/ie/en/cork/ballydehob/restaurant/chestnut
+Mews	2019	51	-9	Baltimore	Ireland	N/A	Modern cuisine	N/A	https://guide.michelin.com/ie/en/cork/ie-baltimore/restaurant/mews
+Ichigo Ichie	2019	52	-8	Corcaigh/Cork	Ireland	N/A	Japanese	N/A	https://guide.michelin.com/ie/en/cork/corcaigh-cork/restaurant/ichigo-ichie
+Chapter One	2019	53	-6	City Centre	Ireland	D1	Modern cuisine	N/A	https://guide.michelin.com/ie/en/dublin/city-centre/restaurant/chapter-one
+Greenhouse	2019	53	-6	City Centre	Ireland	D2	Modern cuisine	N/A	https://guide.michelin.com/ie/en/dublin/city-centre/restaurant/greenhouse
+L'Ecrivain	2019	53	-6	City Centre	Ireland	D2	Modern cuisine	N/A	https://guide.michelin.com/ie/en/dublin/city-centre/restaurant/l-ecrivain
+Campagne	2019	53	-7	Cill Chainnigh/Kilkenny	Ireland	N/A	Modern British	N/A	https://guide.michelin.com/ie/en/kilkenny/cill-chainnigh-kilkenny/restaurant/campagne
+Heron & Grey	2019	53	-6	Blackrock	Ireland	N/A	Modern cuisine	N/A	https://guide.michelin.com/ie/en/dun-laoghaire-rathdown/blackrock/restaurant/heron-grey
+Lady Helen	2019	53	-7	Baile Mhic Andáin/Thomastown	Ireland	N/A	Modern cuisine	N/A	https://guide.michelin.com/ie/en/kilkenny/baile-mhic-andain-thomastown/restaurant/lady-helen
+House	2019	52	-8	Aird Mhór/Ardmore	Ireland	N/A	Modern cuisine	N/A	https://guide.michelin.com/ie/en/waterford/aird-mhor-ardmore/restaurant/house
+Olympe	2019	-23	-43	Rio de Janeiro - 22470	Rio de Janeiro	230	French	$$$$$	https://guide.michelin.com/br/en/rio-de-janeiro-region/rio-de-janeiro/restaurant/olympe
+Lasai	2019	-23	-43	Rio de Janeiro - 22271	Rio de Janeiro	020	modern	$$$$$	https://guide.michelin.com/br/en/rio-de-janeiro-region/rio-de-janeiro/restaurant/lasai
+Oteque	2019	-23	-43	Rio de Janeiro - 22271	Rio de Janeiro	020	modern	$$$$$	https://guide.michelin.com/br/en/rio-de-janeiro-region/rio-de-janeiro/restaurant/oteque
+Mee	2019	-23	-43	Rio de Janeiro - 22021	Rio de Janeiro	001	Asian influences	$$$$$	https://guide.michelin.com/br/en/rio-de-janeiro-region/rio-de-janeiro/restaurant/mee
+Cipriani	2019	-23	-43	Rio de Janeiro - 22021	Rio de Janeiro	001	Italian	$$$$$	https://guide.michelin.com/br/en/rio-de-janeiro-region/rio-de-janeiro/restaurant/cipriani
+Jun Sakamoto	2019	-24	-47	São Paulo - 05413	Sao Paulo	000	Japanese	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/jun-sakamoto
+Maní	2019	-24	-47	São Paulo - 05415	Sao Paulo	000	creative	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/mani
+Evvai	2019	-24	-47	São Paulo - 05415	Sao Paulo	000	modern	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/evvai
+Picchi	2019	-24	-47	São Paulo - 01426	Sao Paulo	001	Italian	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/picchi
+Kosushi	2019	-24	-47	São Paulo - 04538	Sao Paulo	110	Japanese	$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/kosushi
+Ryo Gastronomia	2019	-24	-47	São Paulo - 04531	Sao Paulo	001	Japanese	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/ryo-gastronomia
+Tangará Jean-Georges	2019	-24	-47	São Paulo - 05706	Sao Paulo	290	modern	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/tangara-jean-georges
+Kinoshita	2019	-24	-47	São Paulo - 04509	Sao Paulo	001	Japanese	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/kinoshita
+Kan Suke	2019	-24	-47	São Paulo - 01401	Sao Paulo	000	Japanese	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/kan-suke
+Huto	2019	-24	-47	São Paulo - 04080	Sao Paulo	004	Japanese	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/huto
+Stay	2019	38	127	Seoul	South Korea	N/A	French contemporary	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/stay
+Lee Jong Kuk 104	2019	38	127	Seoul	South Korea	N/A	Korean	$$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/lee-jong-kuk-104
+Hansikgonggan	2019	38	127	Seoul	South Korea	N/A	Korean	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/hansikgonggan
+Dining in Space	2019	38	127	Seoul	South Korea	N/A	French contemporary	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/dining-in-space
+Exquisine	2019	38	127	Seoul	South Korea	N/A	Innovative	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/exquisine
+Dosa	2019	38	127	Seoul	South Korea	N/A	Innovative	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/dosa511871
+Joo Ok	2019	38	127	Seoul	South Korea	N/A	Korean contemporary	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/joo-ok
+Balwoo Gongyang	2019	38	127	Seoul	South Korea	N/A	Temple cuisine	$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/balwoo-gongyang
+Muoki	2019	38	127	Seoul	South Korea	N/A	Innovative	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/muoki
+L'Amitié	2019	38	127	Seoul	South Korea	N/A	French	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/l-amitie
+Yu Yuan	2019	38	127	Seoul	South Korea	N/A	Chinese	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/yu-yuan
+Bicena	2019	38	127	Seoul	South Korea	N/A	Korean	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/bicena
+Mosu	2019	38	127	Seoul	South Korea	N/A	Innovative	$$$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/mosu
+Poom	2019	38	127	Seoul	South Korea	N/A	Korean	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/poom
+Soigné	2019	37	127	Seoul	South Korea	N/A	Innovative	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/soigne
+Table for Four	2019	37	127	Seoul	South Korea	N/A	European contemporary	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/table-for-four
+Zero Complex	2019	37	127	Seoul	South Korea	N/A	Innovative	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/zero-complex
+Jin Jin	2019	38	127	Seoul	South Korea	N/A	Chinese	$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/jin-jin
+Gotgan	2019	38	127	Seoul	South Korea	N/A	Korean	$$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/gotgan
+Hill Street Tai Hwa Pork Noodle	2018	1	104	Singapore	Singapore	N/A	Street Food	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/hill-street-tai-hwa-pork-noodle
+Putien (Kitchener Road)	2018	1	104	Singapore	Singapore	N/A	Fujian	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/putien-kitchener-road
+Chef Kang's	2018	1	104	Singapore	Singapore	N/A	Cantonese	$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/chef-kang-s
+Garibaldi	2018	1	104	Singapore	Singapore	N/A	Italian	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/garibaldi
+Summer Pavilion	2018	1	104	Singapore	Singapore	N/A	Cantonese	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/summer-pavilion
+Shinji (Bras Basah Road)	2018	1	104	Singapore	Singapore	N/A	Sushi	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/shinji-bras-basah-road
+The Song of India	2018	1	104	Singapore	Singapore	N/A	Indian	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/the-song-of-india
+Lei Garden	2018	1	104	Singapore	Singapore	N/A	Cantonese	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/lei-garden501509
+Whitegrass	2018	1	104	Singapore	Singapore	N/A	Australian	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/whitegrass
+Jaan	2018	1	104	Singapore	Singapore	N/A	French contemporary	$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/jaan
+Labyrinth	2018	1	104	Singapore	Singapore	N/A	Innovative	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/labyrinth
+Cut	2018	1	104	Singapore	Singapore	N/A	Steakhouse	$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/cut
+Alma	2018	1	104	Singapore	Singapore	N/A	European contemporary	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/alma
+Béni	2018	1	104	Singapore	Singapore	N/A	French contemporary	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/beni
+Crystal Jade Golden Palace	2018	1	104	Singapore	Singapore	N/A	Chinese	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/crystal-jade-golden-palace
+Imperial Treasure Fine Teochew Cuisine (Orchard)	2018	1	104	Singapore	Singapore	N/A	Chinese	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/imperial-treasure-fine-teochew-cuisine-orchard
+Saint Pierre	2018	1	104	Singapore	Singapore	N/A	French contemporary	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/saint-pierre
+Sushi Ichi	2018	1	104	Singapore	Singapore	N/A	Sushi	$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/sushi-ichi
+Sushi Kimura	2018	1	104	Singapore	Singapore	N/A	Sushi	$$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/sushi-kimura
+Iggy's	2018	1	104	Singapore	Singapore	N/A	European contemporary	$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/iggy-s
+Braci	2018	1	104	Singapore	Singapore	N/A	Italian contemporary	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/braci
+Jiang-Nan Chun	2018	1	104	Singapore	Singapore	N/A	Cantonese	$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/jiang-nan-chun
+Bacchanalia	2018	1	104	Singapore	Singapore	N/A	Innovative	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/bacchanalia
+Shinji (Tanglin Road)	2018	1	104	Singapore	Singapore	N/A	Sushi	$$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/shinji-tanglin-road
+Corner House	2018	1	104	Singapore	Singapore	N/A	Innovative	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/corner-house
+Summer Palace	2018	1	104	Singapore	Singapore	N/A	Cantonese	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/summer-palace501658
+Cheek by Jowl	2018	1	104	Singapore	Singapore	N/A	Australian	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/cheek-by-jowl
+Nouri	2018	1	104	Singapore	Singapore	N/A	Innovative	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/nouri
+Liao Fan Hong Kong Soya Sauce Chicken Rice & Noodle	2018	1	104	Singapore	Singapore	N/A	Street Food	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/liao-fan-hong-kong-soya-sauce-chicken-rice-noodle
+Burnt Ends	2018	1	104	Singapore	Singapore	N/A	Barbecue	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/burnt-ends
+Rhubarb	2018	1	104	Singapore	Singapore	N/A	French contemporary	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/rhubarb
+Meta	2018	1	104	Singapore	Singapore	N/A	Innovative	$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/meta
+Ma Cuisine	2018	1	104	Singapore	Singapore	N/A	French	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/ma-cuisine
+Candlenut	2018	1	104	Singapore	Singapore	N/A	Peranakan	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/candlenut
+Bhoga	2019	58	12	Göteborg	Sweden	411 14	Creative	$$$	https://guide.michelin.com/se/en/vastra-gotaland/goteborg/restaurant/bhoga
+Koka	2019	58	12	Göteborg	Sweden	411 25	Modern cuisine	$$$	https://guide.michelin.com/se/en/vastra-gotaland/goteborg/restaurant/koka
+28+	2019	58	12	Göteborg	Sweden	411 34	Modern cuisine	$$$	https://guide.michelin.com/se/en/vastra-gotaland/goteborg/restaurant/28
+SK Mat & Människor	2019	58	12	Göteborg	Sweden	412 55	Modern cuisine	$$$	https://guide.michelin.com/se/en/vastra-gotaland/goteborg/restaurant/sk-mat-manniskor
+Thörnströms Kök	2019	58	12	Göteborg	Sweden	411 32	Classic cuisine	$$$	https://guide.michelin.com/se/en/vastra-gotaland/goteborg/restaurant/thornstroms-kok
+Upper House	2019	58	12	Göteborg	Sweden	402 26	Creative	$$$$	https://guide.michelin.com/se/en/vastra-gotaland/goteborg/restaurant/upper-house
+Agrikultur	2019	59	18	Stockholm	Sweden	113 54	Modern cuisine	$$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/agrikultur
+Sushi Sho	2019	59	18	Stockholm	Sweden	113 28	Japanese	$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/sushi-sho
+Volt	2019	59	18	Stockholm	Sweden	114 48	Creative	$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/volt
+Ekstedt	2019	59	18	Stockholm	Sweden	11446	Meats and grills	$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/ekstedt
+Operakällaren	2019	59	18	Stockholm	Sweden	111 86	Classic cuisine	$$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/operakallaren
+Mathias Dahlgren-Matbaren	2019	59	18	Stockholm	Sweden	103 27	Modern cuisine	$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/mathias-dahlgren-matbaren
+Aloë	2019	59	18	Stockholm	Sweden	125 33	Creative	$$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/aloe
+PM & Vänner	2019	57	15	Växjö	Sweden	352 31	Creative	$$$	https://guide.michelin.com/se/en/kronoberg/vaxjo/restaurant/pm-vanner
+Bloom in the Park	2019	56	13	Malmö	Sweden	214 66	Creative	$$	https://guide.michelin.com/se/en/skane/malmo/restaurant/bloom-in-the-park
+SAV	2019	56	13	Malmö	Sweden	21875	Creative	$$$	https://guide.michelin.com/se/en/skane/malmo/restaurant/sav
+Golden Formosa	2019	25	122	Taipei	Taipei	110	Taiwanese	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/golden-formosa
+Danny's Steakhouse	2019	25	122	Taipei	Taipei	110	Steakhouse	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/danny-s-steakhouse
+L'Atelier de Joël Robuchon	2019	25	122	Taipei	Taipei	110	French contemporary	$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/l-atelier-de-joel-robuchon550759
+Kitcho	2019	25	122	Taipei	Taipei	110	Sushi	$$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/kitcho
+Tien Hsiang Lo	2019	25	122	Taipei	Taipei	110	Hang Zhou	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/tien-hsiang-lo
+Ya Ge	2019	25	122	Taipei	Taipei	110	Cantonese	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/ya-ge
+Da-Wan	2019	25	122	Taipei	Taipei	110	Barbecue	$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/da-wan
+Sushi Nomura	2019	25	122	Taipei	Taipei	110	Sushi	$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/sushi-nomura
+logy	2019	25	122	Taipei	Taipei	110	Asian contemporary	$$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/logy
+Ming Fu	2019	25	122	Taipei	Taipei	110	Taiwanese	$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/ming-fu
+Ken An Ho	2019	25	122	Taipei	Taipei	110	Japanese	$$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/ken-an-ho
+Sushi Ryu	2019	25	122	Taipei	Taipei	110	Sushi	$$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/sushi-ryu
+MUME	2019	25	122	Taipei	Taipei	110	European contemporary	$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/mume
+Impromptu by Paul Lee	2019	25	122	Taipei	Taipei	110	Innovative	$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/impromptu-by-paul-lee
+Longtail	2019	25	122	Taipei	Taipei	110	Innovative	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/longtail
+Mountain and Sea House	2019	25	122	Taipei	Taipei	110	Taiwanese	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/mountain-and-sea-house
+Da San Yuan	2019	25	122	Taipei	Taipei	110	Cantonese	$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/da-san-yuan
+Tainan Tan Tsu Mien Seafood	2019	25	121	Taipei	Taipei	110	Seafood	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/tainan-tan-tsu-mien-seafood
+Suan Thip	2019	14	101	Bangkok	Thailand	N/A	Thai	$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/suan-thip
+Upstairs at Mikkeller	2019	14	101	Bangkok	Thailand	N/A	Innovative	$$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/upstairs-at-mikkeller
+Chim by Siam Wisdom	2019	14	101	Bangkok	Thailand	N/A	Thai	$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/chim-by-siam-wisdom
+R-Haan	2019	14	101	Bangkok	Thailand	N/A	Thai	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/r-haan
+Canvas	2019	14	101	Bangkok	Thailand	N/A	Innovative	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/canvas566292
+Bo.lan	2019	14	101	Bangkok	Thailand	N/A	Thai	$$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/bo-lan
+Sra Bua by Kiin Kiin	2019	14	101	Bangkok	Thailand	N/A	Thai Contemporary	$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/sra-bua-by-kiin-kiin
+Elements	2019	14	101	Bangkok	Thailand	N/A	French contemporary	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/elements
+Paste	2019	14	101	Bangkok	Thailand	N/A	Thai	$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/paste
+Ginza Sushi ichi	2019	14	101	Bangkok	Thailand	N/A	Sushi	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/ginza-sushi-ichi
+Sorn	2019	14	101	Bangkok	Thailand	N/A	Southern Thai	$$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/sorn
+Savelberg	2019	14	101	Bangkok	Thailand	N/A	French contemporary	$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/savelberg
+Saneh Jaan	2019	14	101	Bangkok	Thailand	N/A	Thai	$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/saneh-jaan
+Gaa	2019	14	101	Bangkok	Thailand	N/A	Innovative	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/gaa
+Methavalai Sorndaeng	2019	14	101	Bangkok	Thailand	N/A	Thai	$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/methavalai-sorndaeng
+Jay Fai	2019	14	101	Bangkok	Thailand	N/A	Street Food	$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/jay-fai
+Nahm	2019	14	101	Bangkok	Thailand	N/A	Thai	$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/nahm
+J'AIME by Jean-Michel Lorain	2019	14	101	Bangkok	Thailand	N/A	French contemporary	$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/j-aime-by-jean-michel-lorain
+Saawaan	2019	14	101	Bangkok	Thailand	N/A	Thai Contemporary	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/saawaan
+Le Du	2019	14	101	Bangkok	Thailand	N/A	Thai	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/le-du
+Ruean Panya	2019	14	100	Bangkok	Thailand	N/A	Thai	$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/ruean-panya
+PRU	2019	8	98	Phuket	Thailand	N/A	Innovative	$$$$$	https://guide.michelin.com/th/en/phuket-region/phuket/restaurant/pru
+Blue Duck Tavern	2019	39	-77	Washington, D.C.	Washington DC	20037	American	$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/blue-duck-tavern
+Tail Up Goat	2019	39	-77	Washington, D.C.	Washington DC	20009	Contemporary	$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/tail-up-goat
+Komi	2019	39	-77	Washington, D.C.	Washington DC	20036	Mediterranean	$$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/komi
+Sushi Taro	2019	39	-77	Washington, D.C.	Washington DC	20036	Japanese	$$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/sushi-taro
+Plume	2019	39	-77	Washington, D.C.	Washington DC	20036	European	$$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/plume
+Siren by RW	2019	39	-77	Washington, D.C.	Washington DC	20005	Seafood	$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/siren-by-rw
+Bresca	2019	39	-77	Washington, D.C.	Washington DC	20000	Contemporary	$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/bresca
+The Dabney	2019	39	-77	Washington, D.C.	Washington DC	20001	American	$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/the-dabney
+Métier	2019	39	-77	Washington, D.C.	Washington DC	20001	Contemporary	$$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/metier
+Kinship	2019	39	-77	Washington, D.C.	Washington DC	20001	Contemporary	$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/kinship
+Fiola	2019	39	-77	Washington, D.C.	Washington DC	20004	Italian	$$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/fiola
+Masseria	2019	39	-77	Washington, D.C.	Washington DC	20002	Italian	$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/masseria
+Rose's Luxury	2019	39	-77	Washington, D.C.	Washington DC	20003	Contemporary	$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/rose-s-luxury
+Loch Bay	2019	58	-7	Waternish	United Kingdom	IV55 8GA	Modern cuisine	N/A	https://guide.michelin.com/gb/en/highland/waternish/restaurant/loch-bay
+Braidwoods	2019	56	-5	Dalry	United Kingdom	KA24 4LN	Classic cuisine	N/A	https://guide.michelin.com/gb/en/north-ayrshire/dalry/restaurant/braidwoods
+Eipic	2019	55	-6	Belfast	United Kingdom	BT1 6PF	Modern cuisine	N/A	https://guide.michelin.com/gb/en/belfast/belfast/restaurant/eipic
+OX	2019	55	-6	Belfast	United Kingdom	BT1 3LA	Modern British	N/A	https://guide.michelin.com/gb/en/belfast/belfast/restaurant/ox399109
+The Peat Inn	2019	56	-3	Peat Inn	United Kingdom	KY15 5LH	Classic cuisine	N/A	https://guide.michelin.com/gb/en/fife/peat-inn/restaurant/the-peat-inn
+Kitchin	2019	56	-3	Leith	United Kingdom	EH6 6LX	Modern cuisine	N/A	https://guide.michelin.com/gb/en/city-of-edinburgh/leith/restaurant/kitchin
+Martin Wishart	2019	56	-3	Leith	United Kingdom	EH6 6RA	Modern cuisine	N/A	https://guide.michelin.com/gb/en/city-of-edinburgh/leith/restaurant/martin-wishart
+Number One	2019	56	-3	Edinburgh	United Kingdom	EH2 2EQ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/city-of-edinburgh/edinburgh/restaurant/number-one
+21212	2019	56	-3	Edinburgh	United Kingdom	EH7 5AB	Creative	N/A	https://guide.michelin.com/gb/en/city-of-edinburgh/edinburgh/restaurant/21212
+The Cellar	2019	56	-3	Anstruther	United Kingdom	KY10 3AA	Modern cuisine	N/A	https://guide.michelin.com/gb/en/fife/anstruther/restaurant/the-cellar
+Forest Side	2019	54	-3	Grasmere	United Kingdom	LA22 9RN	Modern British	N/A	https://guide.michelin.com/gb/en/cumbria/grasmere/restaurant/forest-side
+HRiSHi	2019	54	-3	Bowness-on-Windermere	United Kingdom	LA23 3NE	Modern cuisine	N/A	https://guide.michelin.com/gb/en/cumbria/bowness-on-windermere/restaurant/hrishi
+Rogan & Co	2019	54	-3	Cartmel	United Kingdom	LA11 6QD	Creative British	N/A	https://guide.michelin.com/gb/en/cumbria/cartmel/restaurant/rogan-co
+House of Tides	2019	55	-2	Newcastle upon Tyne	United Kingdom	NE1 3RF	Modern cuisine	N/A	https://guide.michelin.com/gb/en/tyne-and-wear/newcastle-upon-tyne/restaurant/house-of-tides
+Sosban & The Old Butchers	2019	53	-4	Menai Bridge/Porthaethwy	United Kingdom	LL59 5EE	Modern cuisine	N/A	https://guide.michelin.com/gb/en/isle-of-anglesey/menai-bridge-porthaethwy/restaurant/sosban-the-old-butchers
+Northcote	2019	54	-2	Langho	United Kingdom	BB6 8BE	Modern British	N/A	https://guide.michelin.com/gb/en/lancashire/langho/restaurant/northcote
+Yorke Arms	2019	54	-2	Pateley Bridge	United Kingdom	HG3 5RL	Modern cuisine	N/A	https://guide.michelin.com/gb/en/north-yorkshire/pateley-bridge/restaurant/yorke-arms
+Fraiche	2019	53	-3	Birkenhead	United Kingdom	CH43 5SG	Creative	N/A	https://guide.michelin.com/gb/en/merseyside/birkenhead/restaurant/fraiche
+White Swan	2019	54	-2	Fence	United Kingdom	BB12 9QA	Modern British	N/A	https://guide.michelin.com/gb/en/lancashire/fence/restaurant/white-swan
+Tyddyn Llan	2019	53	-3	Llandrillo	United Kingdom	LL21 OST	Classic cuisine	N/A	https://guide.michelin.com/gb/en/denbighshire/llandrillo/restaurant/tyddyn-llan
+Ynyshir	2019	53	-4	Machynlleth	United Kingdom	SY20 8TA	Creative	N/A	https://guide.michelin.com/gb/en/ceredigion/machynlleth/restaurant/ynyshir
+Black Swan	2019	54	-1	Oldstead	United Kingdom	YO61 4BL	Modern British	N/A	https://guide.michelin.com/gb/en/north-yorkshire/oldstead/restaurant/black-swan
+Simon Radley at Chester Grosvenor	2019	53	-3	Chester	United Kingdom	CH1 1LT	Modern cuisine	N/A	https://guide.michelin.com/gb/en/cheshire-west-and-chester/chester/restaurant/simon-radley-at-chester-grosvenor
+Star Inn at Harome	2019	54	-1	Harome	United Kingdom	YO62 5JE	Modern British	N/A	https://guide.michelin.com/gb/en/north-yorkshire/harome/restaurant/star-inn-at-harome
+The Man Behind The Curtain	2019	54	-2	Leeds	United Kingdom	LS1 7JH	Creative	N/A	https://guide.michelin.com/gb/en/kent/leeds/restaurant/the-man-behind-the-curtain
+The Checkers	2019	53	-3	Montgomery/Trefaldwyn	United Kingdom	SY15 6PN	French	N/A	https://guide.michelin.com/gb/en/powys/montgomery-trefaldwyn/restaurant/the-checkers
+Pipe and Glass	2019	54	-1	South Dalton	United Kingdom	HU17 7PN	Modern British	N/A	https://guide.michelin.com/gb/en/east-riding-of-yorkshire/south-dalton/restaurant/pipe-and-glass
+Fischer's at Baslow Hall	2019	53	-2	Baslow	United Kingdom	DE45 1RR	Modern cuisine	N/A	https://guide.michelin.com/gb/en/derbyshire/baslow/restaurant/fischer-s-at-baslow-hall
+Winteringham Fields	2019	54	-1	Winteringham	United Kingdom	DN15 9ND	Modern cuisine	N/A	https://guide.michelin.com/gb/en/north-lincolnshire/winteringham/restaurant/winteringham-fields
+Thomas Carr @ The Olive Room	2019	51	-4	Ilfracombe	United Kingdom	EX34 9DJ	Seafood	N/A	https://guide.michelin.com/gb/en/devon/ilfracombe/restaurant/thomas-carr-the-olive-room
+Walnut Tree	2019	52	-3	Llanddewi Skirrid	United Kingdom	NP7 8AW	Modern British	N/A	https://guide.michelin.com/gb/en/monmouthshire/llanddewi-skirrid/restaurant/walnut-tree
+Paul Ainsworth at No.6	2019	51	-5	Padstow	United Kingdom	PL28 8AP	Modern cuisine	N/A	https://guide.michelin.com/gb/en/cornwall/padstow/restaurant/paul-ainsworth-at-no-6
+Simpsons	2019	52	-2	Birmingham	United Kingdom	B15 3DU	Modern cuisine	N/A	https://guide.michelin.com/gb/en/west-midlands/birmingham/restaurant/simpsons
+Purnell's	2019	52	-2	Birmingham	United Kingdom	B3 2DH	Modern cuisine	N/A	https://guide.michelin.com/gb/en/west-midlands/birmingham/restaurant/purnell-s
+Adam's	2019	52	-2	Birmingham	United Kingdom	B2 5UG	Modern cuisine	N/A	https://guide.michelin.com/gb/en/west-midlands/birmingham/restaurant/adam-s
+Outlaw's Fish Kitchen	2019	51	-5	Port Isaac	United Kingdom	PL29 3RH	Seafood	N/A	https://guide.michelin.com/gb/en/cornwall/port-isaac/restaurant/outlaw-s-fish-kitchen
+Carters of Moseley	2019	52	-2	Birmingham	United Kingdom	B13 9EZ	Modern British	N/A	https://guide.michelin.com/gb/en/west-midlands/birmingham/restaurant/carters-of-moseley
+Peel's	2019	52	-2	Hampton in Arden	United Kingdom	B92 ODQ	Creative British	N/A	https://guide.michelin.com/gb/en/west-midlands/hampton-in-arden/restaurant/peel-s
+John's House	2019	53	-1	Mountsorrel	United Kingdom	LE12 7AR	Modern cuisine	N/A	https://guide.michelin.com/gb/en/leicestershire/mountsorrel/restaurant/john-s-house
+The Whitebrook	2019	52	-3	Whitebrook	United Kingdom	NP25 4TX	Modern British	N/A	https://guide.michelin.com/gb/en/monmouthshire/whitebrook/restaurant/the-whitebrook
+James Sommerin	2019	51	-3	Penarth	United Kingdom	CF64 3AU	Modern cuisine	N/A	https://guide.michelin.com/gb/en/the-vale-of-glamorgan/penarth/restaurant/james-sommerin
+Driftwood	2019	50	-5	Portscatho	United Kingdom	TR2 5EW	Modern cuisine	N/A	https://guide.michelin.com/gb/en/cornwall/portscatho/restaurant/driftwood
+The Cross at Kenilworth	2019	52	-2	Kenilworth	United Kingdom	CV8 2EZ	Classic cuisine	N/A	https://guide.michelin.com/gb/en/warwickshire/kenilworth/restaurant/the-cross-at-kenilworth
+Masons Arms	2019	51	-4	Knowstone	United Kingdom	EX36 4RY	Classic French	N/A	https://guide.michelin.com/gb/en/devon/knowstone/restaurant/masons-arms
+Salt	2019	52	-2	Stratford-upon-Avon	United Kingdom	CV37 6HB	Modern British	N/A	https://guide.michelin.com/gb/en/warwickshire/stratford-upon-avon/restaurant/salt522869
+Le Champignon Sauvage	2019	52	-2	Cheltenham	United Kingdom	GL50 2AQ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/gloucestershire/cheltenham/restaurant/le-champignon-sauvage
+Gidleigh Park	2019	51	-4	Chagford	United Kingdom	TQ13 8HH	Modern cuisine	N/A	https://guide.michelin.com/gb/en/devon/chagford/restaurant/gidleigh-park
+Hambleton Hall	2019	53	-1	Upper Hambleton	United Kingdom	LE15 8TH	Classic cuisine	N/A	https://guide.michelin.com/gb/en/rutland/upper-hambleton/restaurant/hambleton-hall
+wilks	2019	51	-3	Bristol	United Kingdom	BS6 6PG	Modern British	N/A	https://guide.michelin.com/gb/en/south-gloucestershire/bristol/restaurant/wilks
+Bulrush	2019	51	-3	Bristol	United Kingdom	BS6 5TZ	Modern British	N/A	https://guide.michelin.com/gb/en/south-gloucestershire/bristol/restaurant/bulrush
+Casamia	2019	51	-3	Bristol	United Kingdom	BS1 6FU	Creative	N/A	https://guide.michelin.com/gb/en/south-gloucestershire/bristol/restaurant/casamia
+Paco Tapas	2019	51	-3	Bristol	United Kingdom	BS1 6FU	Spanish	N/A	https://guide.michelin.com/gb/en/south-gloucestershire/bristol/restaurant/paco-tapas
+Pony & Trap	2019	51	-3	Chew Magna	United Kingdom	BS40 8TQ	Modern British	N/A	https://guide.michelin.com/gb/en/bath-and-north-east-somerset/chew-magna/restaurant/pony-trap
+The Dining Room	2019	52	-2	Malmesbury	United Kingdom	SN16 0RB	Asian influences	N/A	https://guide.michelin.com/gb/en/wiltshire/malmesbury/restaurant/the-dining-room193454
+Bybrook	2019	51	-2	Castle Combe	United Kingdom	SN14 7HR	Modern British	N/A	https://guide.michelin.com/gb/en/wiltshire/castle-combe/restaurant/bybrook
+Restaurant Hywel Jones by Lucknam Park	2019	51	-2	Colerne	United Kingdom	SN14 8AZ	Modern British	N/A	https://guide.michelin.com/gb/en/wiltshire/colerne/restaurant/restaurant-hywel-jones-by-lucknam-park
+Olive Tree	2019	51	-2	Bath	United Kingdom	BA1 2QF	Modern cuisine	N/A	https://guide.michelin.com/gb/en/bath-and-north-east-somerset/bath/restaurant/olive-tree
+Lympstone Manor	2019	51	-3	Lympstone	United Kingdom	EX8 3NZ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/devon/lympstone/restaurant/lympstone-manor
+The Neptune	2019	53	1	Hunstanton	United Kingdom	PE36 6HZ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/norfolk/hunstanton/restaurant/the-neptune
+Elephant	2019	50	-4	Torquay	United Kingdom	TQ1 2BH	Modern British	N/A	https://guide.michelin.com/gb/en/torbay/torquay/restaurant/elephant
+Oxford Kitchen	2019	52	-1	Oxford	United Kingdom	OX2 7HQ	Modern British	N/A	https://guide.michelin.com/gb/en/oxfordshire/oxford/restaurant/oxford-kitchen
+Nut Tree	2019	52	-1	Murcott	United Kingdom	OX5 2RE	Traditional British	N/A	https://guide.michelin.com/gb/en/oxfordshire/murcott/restaurant/nut-tree
+Morston Hall	2019	53	1	Morston	United Kingdom	NR25 7AA	Modern British	N/A	https://guide.michelin.com/gb/en/norfolk/morston/restaurant/morston-hall
+Red Lion Freehouse	2019	51	-2	East Chisenbury	United Kingdom	SN9 6AQ	Classic cuisine	N/A	https://guide.michelin.com/gb/en/wiltshire/east-chisenbury/restaurant/red-lion-freehouse
+Blackbird	2019	51	-1	Newbury	United Kingdom	RG20 8AQ	Classic cuisine	N/A	https://guide.michelin.com/gb/en/west-berkshire/newbury/restaurant/blackbird552018
+Woodspeen	2019	51	-1	Newbury	United Kingdom	RG20 8BN	Modern cuisine	N/A	https://guide.michelin.com/gb/en/west-berkshire/newbury/restaurant/woodspeen
+The Coach	2019	52	-1	Marlow	United Kingdom	SL7 2LS	Modern British	N/A	https://guide.michelin.com/gb/en/buckinghamshire/marlow/restaurant/the-coach
+Crown	2019	52	-1	Burchett's Green	United Kingdom	SL6 6QZ	Regional cuisine	N/A	https://guide.michelin.com/gb/en/windsor-and-maidenhead/burchett-s-green/restaurant/crown442549
+L'Ortolan	2019	51	-1	Shinfield	United Kingdom	RG2 9BY	French	N/A	https://guide.michelin.com/gb/en/wokingham/shinfield/restaurant/l-ortolan
+Hinds Head	2019	52	-1	Bray	United Kingdom	SL6 2AB	Traditional British	N/A	https://guide.michelin.com/gb/en/buckinghamshire/bray/restaurant/hinds-head
+Black Rat	2019	51	-1	Winchester	United Kingdom	SO23 0HX	Modern cuisine	N/A	https://guide.michelin.com/gb/en/hampshire/winchester/restaurant/black-rat
+Matt Worswick at The Latymer	2019	51	-1	Bagshot	United Kingdom	GU19 5EU	Modern cuisine	N/A	https://guide.michelin.com/gb/en/surrey/bagshot/restaurant/matt-worswick-at-the-latymer
+Coworth Park	2019	51	-1	Ascot	United Kingdom	SL5 7SE	Modern cuisine	N/A	https://guide.michelin.com/gb/en/windsor-and-maidenhead/ascot/restaurant/coworth-park
+Tudor Room	2019	51	-1	Egham	United Kingdom	TW20 9UR	Modern cuisine	N/A	https://guide.michelin.com/gb/en/surrey/egham/restaurant/tudor-room
+The Glasshouse	2019	51	0	Kew	United Kingdom	TW9 3PZ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/kew/restaurant/the-glasshouse
+La Trompette	2019	51	0	Chiswick	United Kingdom	W4 2EU	Modern British	N/A	https://guide.michelin.com/gb/en/greater-london/chiswick/restaurant/la-trompette
+Tim Allen's Flitch of Bacon	2019	52	0	Little Dunmow	United Kingdom	CM6 3HT	Modern British	N/A	https://guide.michelin.com/gb/en/essex/little-dunmow/restaurant/tim-allen-s-flitch-of-bacon
+River Café	2019	51	0	Hammersmith	United Kingdom	W6 9HA	Italian	N/A	https://guide.michelin.com/gb/en/greater-london/hammersmith/restaurant/river-cafe
+Kitchen W8	2019	51	0	Kensington	United Kingdom	W8 6AH	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/kensington/restaurant/kitchen-w8
+Trishna	2019	52	0	Marylebone	United Kingdom	W1U 3DG	Indian	N/A	https://guide.michelin.com/gb/en/greater-london/marylebone/restaurant/trishna
+Roganic	2019	52	0	Marylebone	United Kingdom	W1U 3DB	Creative British	N/A	https://guide.michelin.com/gb/en/greater-london/marylebone/restaurant/roganic
+Locanda Locatelli	2019	52	0	Marylebone	United Kingdom	W1H 7JZ	Italian	N/A	https://guide.michelin.com/gb/en/greater-london/marylebone/restaurant/locanda-locatelli
+Texture	2019	52	0	Marylebone	United Kingdom	W1H 7BY	Creative	N/A	https://guide.michelin.com/gb/en/greater-london/marylebone/restaurant/texture
+Portland	2019	52	0	Regent's Park	United Kingdom	W1W 6QQ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/regent-s-park/restaurant/portland
+Harwood Arms	2019	51	0	Fulham	United Kingdom	SW6 1QP	Modern British	N/A	https://guide.michelin.com/gb/en/greater-london/fulham/restaurant/harwood-arms
+Pied à Terre	2019	52	0	Bloomsbury	United Kingdom	W1T 2NH	Creative	N/A	https://guide.michelin.com/gb/en/greater-london/bloomsbury/restaurant/pied-a-terre
+The Ninth	2019	52	0	Bloomsbury	United Kingdom	W1T 2NB	Mediterranean cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/bloomsbury/restaurant/the-ninth
+Kai	2019	52	0	Mayfair	United Kingdom	W1K 2QU	Chinese	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/kai123638
+Pollen Street Social	2019	52	0	Mayfair	United Kingdom	W1S 1NQ	Creative	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/pollen-street-social
+Hakkasan Mayfair	2019	52	0	Mayfair	United Kingdom	W1J 6QB	Chinese	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/hakkasan-mayfair
+The Square	2019	52	0	Mayfair	United Kingdom	W1J 6PU	Creative French	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/the-square69391
+Alyn Williams at The Westbury	2019	52	0	Mayfair	United Kingdom	W1S 2YF	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/alyn-williams-at-the-westbury
+Benares	2019	52	0	Mayfair	United Kingdom	W1J 6BS	Indian	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/benares
+Hakkasan Hanway Place	2019	52	0	Bloomsbury	United Kingdom	W1T 1HD	Chinese	N/A	https://guide.michelin.com/gb/en/greater-london/bloomsbury/restaurant/hakkasan-hanway-place
+Social Eating House	2019	52	0	Soho	United Kingdom	W1F 7NR	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/soho/restaurant/social-eating-house
+Galvin at Windows	2019	52	0	Mayfair	United Kingdom	W1K 1BE	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/galvin-at-windows
+Murano	2019	52	0	Mayfair	United Kingdom	W1J 5PP	Italian	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/murano
+Marcus	2019	52	0	Belgravia	United Kingdom	SW1X 7RL	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/belgravia/restaurant/marcus
+Sabor	2019	52	0	Mayfair	United Kingdom	W1B 4BR	Spanish	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/sabor
+Clock House	2019	51	0	Ripley	United Kingdom	GU23 6AQ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/surrey/ripley/restaurant/clock-house
+Yauatcha Soho	2019	52	0	Soho	United Kingdom	W1F 0DL	Chinese	N/A	https://guide.michelin.com/gb/en/greater-london/soho/restaurant/yauatcha-soho
+Céleste	2019	52	0	Belgravia	United Kingdom	SW1X 7TA	Creative French	N/A	https://guide.michelin.com/gb/en/greater-london/belgravia/restaurant/celeste
+Gymkhana	2019	52	0	Mayfair	United Kingdom	W1S 4JH	Indian	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/gymkhana
+Amaya	2019	51	0	Belgravia	United Kingdom	SW1X 8JT	Indian	N/A	https://guide.michelin.com/gb/en/greater-london/belgravia/restaurant/amaya
+Pétrus	2019	51	0	Belgravia	United Kingdom	SW1X 8EA	French	N/A	https://guide.michelin.com/gb/en/greater-london/belgravia/restaurant/petrus284688
+Veeraswamy	2019	52	0	Mayfair	United Kingdom	W1B 4RS	Indian	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/veeraswamy
+Barrafina	2019	52	0	Soho	United Kingdom	W1D 3LL	Spanish	N/A	https://guide.michelin.com/gb/en/greater-london/soho/restaurant/barrafina
+Hide	2019	52	0	Mayfair	United Kingdom	W1J 7NB	Modern British	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/hide
+Ritz Restaurant	2019	52	0	Westminster	United Kingdom	W1J 9BR	Modern British	N/A	https://guide.michelin.com/gb/en/greater-london/westminster/restaurant/ritz-restaurant
+Elystan Street	2019	51	0	Chelsea	United Kingdom	SW3 3NT	Modern British	N/A	https://guide.michelin.com/gb/en/greater-london/chelsea/restaurant/elystan-street
+Seven Park Place	2019	52	0	Saint James's	United Kingdom	SW1A 1LS	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/saint-james-s/restaurant/seven-park-place
+Ikoyi	2019	52	0	Saint James's	United Kingdom	SW1Y 4AH	Creative	N/A	https://guide.michelin.com/gb/en/greater-london/saint-james-s/restaurant/ikoyi
+Aquavit	2019	52	0	Saint James's	United Kingdom	SW1Y 4QQ	Scandinavian	N/A	https://guide.michelin.com/gb/en/greater-london/saint-james-s/restaurant/aquavit501082
+Five Fields	2019	51	0	Chelsea	United Kingdom	SW3 2SP	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/chelsea/restaurant/five-fields
+Dining Room at The Goring	2019	51	0	Victoria	United Kingdom	SW1W 0JW	Traditional British	N/A	https://guide.michelin.com/gb/en/greater-london/victoria/restaurant/dining-room-at-the-goring
+St John	2019	52	0	Clerkenwell	United Kingdom	EC1M 4AY	Traditional British	N/A	https://guide.michelin.com/gb/en/greater-london/clerkenwell/restaurant/st-john
+Quilon	2019	51	0	Victoria	United Kingdom	SW1E 6AF	Indian	N/A	https://guide.michelin.com/gb/en/greater-london/victoria/restaurant/quilon
+Club Gascon	2019	52	0	London	United Kingdom	EC1A 9DS	French	N/A	https://guide.michelin.com/gb/en/greater-london/london/restaurant/club-gascon
+A. Wong	2019	51	0	Victoria	United Kingdom	SW1V 1DE	Chinese	N/A	https://guide.michelin.com/gb/en/greater-london/victoria/restaurant/a-wong
+The Clove Club	2019	52	0	Shoreditch	United Kingdom	EC1V 9LT	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/shoreditch/restaurant/the-clove-club
+Leroy	2019	52	0	Shoreditch	United Kingdom	EC2A 4NU	Modern British	N/A	https://guide.michelin.com/gb/en/greater-london/shoreditch/restaurant/leroy
+Angler	2019	52	0	Finsbury	United Kingdom	EC2M 2AF	Seafood	N/A	https://guide.michelin.com/gb/en/greater-london/finsbury/restaurant/angler392235
+Brat	2019	52	0	Shoreditch	United Kingdom	E1 6JL	Traditional British	N/A	https://guide.michelin.com/gb/en/greater-london/shoreditch/restaurant/brat
+Lyle's	2019	52	0	Shoreditch	United Kingdom	E1 6JJ	Modern British	N/A	https://guide.michelin.com/gb/en/greater-london/shoreditch/restaurant/lyle-s
+Galvin La Chapelle	2019	52	0	Spitalfields	United Kingdom	E1 6DY	French	N/A	https://guide.michelin.com/gb/en/greater-london/spitalfields/restaurant/galvin-la-chapelle
+City Social	2019	52	0	City of London	United Kingdom	EC2N 1HQ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/city-of-london/restaurant/city-social
+La Dame de Pic	2019	52	0	City of London	United Kingdom	EC3N 4AJ	Modern French	N/A	https://guide.michelin.com/gb/en/greater-london/city-of-london/restaurant/la-dame-de-pic
+Story	2019	52	0	Bermondsey	United Kingdom	SE1 2JX	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/bermondsey/restaurant/story
+Trinity	2019	51	0	Clapham Common	United Kingdom	SW4 0JG	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/clapham-common/restaurant/trinity
+Chez Bruce	2019	51	0	Wandsworth	United Kingdom	SW17 7EG	French	N/A	https://guide.michelin.com/gb/en/greater-london/wandsworth/restaurant/chez-bruce
+Sorrel	2019	51	0	Dorking	United Kingdom	RH4 2JU	Modern British	N/A	https://guide.michelin.com/gb/en/surrey/dorking/restaurant/sorrel545459
+Restaurant Tristan	2019	51	0	Horsham	United Kingdom	RH12 1HU	Modern British	N/A	https://guide.michelin.com/gb/en/west-sussex/horsham/restaurant/restaurant-tristan
+Gravetye Manor	2019	51	0	Gravetye	United Kingdom	RH19 4LJ	Modern British	N/A	https://guide.michelin.com/gb/en/west-sussex/gravetye/restaurant/gravetye-manor
+The Sportsman	2019	51	1	Seasalter	United Kingdom	CT5 4BP	Modern British	N/A	https://guide.michelin.com/gb/en/kent/seasalter/restaurant/the-sportsman
+West House	2019	51	1	Biddenden	United Kingdom	TN27 8AH	Modern British	N/A	https://guide.michelin.com/gb/en/kent/biddenden/restaurant/west-house
+Fordwich Arms	2019	51	1	Fordwich	United Kingdom	CT2 0DB	Modern cuisine	N/A	https://guide.michelin.com/gb/en/kent/fordwich/restaurant/fordwich-arms
+Samphire	2019	49	-2	Saint Helier/Saint-Hélier	United Kingdom	JE2 4TQ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/saint-helier/saint-helier-saint-helier/restaurant/samphire392987
+Bohemia	2019	49	-2	Saint Helier/Saint-Hélier	United Kingdom	JE2 4UH	Modern cuisine	N/A	https://guide.michelin.com/gb/en/saint-helier/saint-helier-saint-helier/restaurant/bohemia
+\.
+
+
+--
+-- Data for Name: threestar; Type: TABLE DATA; Schema: staging; Owner: admin
+--
+
+COPY staging.threestar (name, year, latitude, longitude, city, region, zipcode, cuisine, price, url) FROM stdin;
+Amador	2019	48	16	Wien	Austria	1190	Creative	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/amador
+Manresa	2019	37	-122	South San Francisco	California	95030	Contemporary	$$$$	https://guide.michelin.com/us/en/california/south-san-francisco/restaurant/manresa
+Benu	2019	38	-122	San Francisco	California	94105	Asian	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/benu
+Quince	2019	38	-122	San Francisco	California	94133	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/quince
+Atelier Crenn	2019	38	-122	San Francisco	California	94123	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/atelier-crenn
+The French Laundry	2019	38	-122	San Francisco	California	94599	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/the-french-laundry
+The Restaurant at Meadowood	2019	39	-122	San Francisco	California	94574	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/the-restaurant-at-meadowood
+SingleThread	2019	39	-123	San Francisco	California	95448	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/singlethread
+Alinea	2019	42	-88	Chicago	Chicago	60614	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/alinea
+Geranium	2019	56	13	København	Denmark	2100 Ø	Creative	$$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/geranium
+T'ang Court	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/t-ang-court
+Bo Innovation	2019	22	114	Hong Kong	Hong Kong	N/A	Innovative	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/bo-innovation
+Lung King Heen	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/lung-king-heen
+Caprice	2019	22	114	Hong Kong	Hong Kong	N/A	French	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/caprice
+8½ Otto e Mezzo - Bombana	2019	22	114	Hong Kong	Hong Kong	N/A	Italian	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/8%C2%BD-otto-e-mezzo-bombana
+L'Atelier de Joël Robuchon	2019	22	114	Hong Kong	Hong Kong	N/A	French contemporary	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/l-atelier-de-joel-robuchon
+Sushi Shikon	2019	22	114	Hong Kong	Hong Kong	N/A	Sushi	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/sushi-shikon
+The Eight	2019	22	114	Macau	Macau	N/A	Chinese	$$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/the-eight
+Robuchon au Dôme	2019	22	114	Macau	Macau	N/A	French contemporary	$$$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/robuchon-au-dome
+Jade Dragon	2019	22	114	Macau	Macau	N/A	Cantonese	$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/jade-dragon
+Maaemo	2019	60	11	Oslo	Norway	0191	Modern cuisine	$$$$	https://guide.michelin.com/no/en/oslo-region/oslo/restaurant/maaemo
+Masa	2019	41	-74	New York	New York City	10019	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/masa
+Per Se	2019	41	-74	New York	New York City	10019	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/per-se
+Le Bernardin	2019	41	-74	New York	New York City	10019	Seafood	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/le-bernardin
+Eleven Madison Park	2019	41	-74	New York	New York City	10010	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/eleven-madison-park
+Chef's Table at Brooklyn Fare	2019	41	-74	New York	New York City	10018	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/chef-s-table-at-brooklyn-fare
+La Yeon	2019	38	127	Seoul	South Korea	N/A	Korean	$$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/la-yeon
+Gaon	2019	38	127	Seoul	South Korea	N/A	Korean	$$$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/gaon
+Frantzén	2019	59	18	Stockholm	Sweden	111 22	Modern cuisine	$$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/frantzen
+Le Palais	2019	25	122	Taipei	Taipei	110	Cantonese	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/le-palais
+The Inn at Little Washington	2019	39	-78	Washington, D.C.	Washington DC	22747	American	$$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/the-inn-at-little-washington
+Fat Duck	2019	52	-1	Bray	United Kingdom	SL6 2AQ	Creative	N/A	https://guide.michelin.com/gb/en/buckinghamshire/bray/restaurant/fat-duck
+Waterside Inn	2019	52	-1	Bray	United Kingdom	SL6 2AT	Classic French	N/A	https://guide.michelin.com/gb/en/buckinghamshire/bray/restaurant/waterside-inn
+Alain Ducasse at The Dorchester	2019	52	0	Mayfair	United Kingdom	W1K 1QA	French	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/alain-ducasse-at-the-dorchester
+The Araki	2019	52	0	Mayfair	United Kingdom	W1S 3BF	Japanese	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/the-araki
+Gordon Ramsay	2019	51	0	Chelsea	United Kingdom	SW3 4HP	French	N/A	https://guide.michelin.com/gb/en/greater-london/chelsea/restaurant/gordon-ramsay
+\.
+
+
+--
+-- Data for Name: twostar; Type: TABLE DATA; Schema: staging; Owner: admin
+--
+
+COPY staging.twostar (name, year, latitude, longitude, city, region, zipcode, cuisine, price, url) FROM stdin;
+SENNS.Restaurant	2019	48	13	Salzburg	Austria	5020	Creative	$$$$$	https://guide.michelin.com/at/en/salzburg-region/salzburg/restaurant/senns-restaurant
+Ikarus	2019	48	13	Salzburg	Austria	5020	Creative	$$$$$	https://guide.michelin.com/at/en/salzburg-region/salzburg/restaurant/ikarus
+Mraz & Sohn	2019	48	16	Wien	Austria	1200	Creative	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/mraz-sohn
+Konstantin Filippou	2019	48	16	Wien	Austria	1010	Modern cuisine	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/konstantin-filippou
+Silvio Nickol Gourmet Restaurant	2019	48	16	Wien	Austria	1010	Modern cuisine	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/silvio-nickol-gourmet-restaurant
+Steirereck im Stadtpark	2019	48	16	Wien	Austria	1030	Creative	$$$$$	https://guide.michelin.com/at/en/vienna/wien/restaurant/steirereck-im-stadtpark
+Baumé	2019	37	-122	South San Francisco	California	94306	Contemporary	$$$$	https://guide.michelin.com/us/en/california/south-san-francisco/restaurant/baume
+Commis	2019	38	-122	San Francisco	California	94601	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/commis
+Californios	2019	38	-122	San Francisco	California	94110	Mexican	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/californios
+Lazy Bear	2019	38	-122	San Francisco	California	94110	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/lazy-bear
+Saison	2019	38	-122	San Francisco	California	94107	Californian	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/saison
+Campton Place	2019	38	-122	San Francisco	California	94108	Indian	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/campton-place
+Coi	2019	38	-122	San Francisco	California	94133	Contemporary	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/coi
+Acquerello	2019	38	-122	San Francisco	California	94109	Italian	$$$$	https://guide.michelin.com/us/en/california/san-francisco/restaurant/acquerello
+Urasawa	2019	34	-118	Los Angeles	California	90210	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/urasawa
+Sushi Ginza Onodera	2019	34	-118	Los Angeles	California	N/A	Japanese	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/sushi-ginza-onodera559850
+Somni	2019	34	-118	Los Angeles	California	90048	Contemporary	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/somni
+Providence	2019	34	-118	Los Angeles	California	90028	Seafood	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/providence
+n/naka	2019	34	-118	Los Angeles	California	90034	Contemporary	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/n-naka
+Vespertine	2019	34	-118	Los Angeles	California	90232	Contemporary	$$$$	https://guide.michelin.com/us/en/california/us-los-angeles/restaurant/vespertine
+Smyth	2019	42	-88	Chicago	Chicago	60607	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/smyth
+Oriole	2019	42	-88	Chicago	Chicago	60661	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/oriole
+Acadia	2019	42	-88	Chicago	Chicago	60616	Contemporary	$$$$	https://guide.michelin.com/us/en/illinois/chicago/restaurant/acadia
+KOKS	2019	62	-7	Leynar	Denmark	335	Creative	$$$$	https://guide.michelin.com/dk/en/faroe-islands/leynar/restaurant/koks558780
+Henne Kirkeby Kro	2019	56	8	Henne	Denmark	6854	Classic cuisine	$$$	https://guide.michelin.com/dk/en/southern-denmark/henne/restaurant/henne-kirkeby-kro
+a‚o‚c	2019	56	13	København	Denmark	1302 K	Modern cuisine	$$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/a%E2%80%9Ao%E2%80%9Ac
+noma	2019	56	13	København	Denmark	1432 K	Creative	$$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/noma
+Kadeau Copenhagen	2019	56	13	København	Denmark	1408 K	Modern cuisine	$$$$	https://guide.michelin.com/dk/en/capital-region/kobenhavn/restaurant/kadeau-copenhagen
+Spondi	2019	38	24	Athína	Greece	116 36	French	$$$$$	https://guide.michelin.com/gr/en/attica/athina/restaurant/spondi
+Sun Tung Lok	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/sun-tung-lok
+Yan Toh Heen	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/yan-toh-heen
+Tin Lung Heen	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/tin-lung-heen
+Tenku RyuGin	2019	22	114	Hong Kong	Hong Kong	N/A	Japanese	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/tenku-ryugin
+Forum	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/forum
+Sushi Saito	2019	22	114	Hong Kong	Hong Kong	N/A	Sushi	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/sushi-saito
+Pierre	2019	22	114	Hong Kong	Hong Kong	N/A	French contemporary	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/pierre
+Ying Jee Club	2019	22	114	Hong Kong	Hong Kong	N/A	Cantonese	$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/ying-jee-club
+Écriture	2019	22	114	Hong Kong	Hong Kong	N/A	French contemporary	$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/ecriture
+Ta Vie	2019	22	114	Hong Kong	Hong Kong	N/A	Innovative	$$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/ta-vie
+Amber	2019	22	114	Hong Kong	Hong Kong	N/A	French contemporary	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/amber569032
+Kashiwaya	2019	22	114	Hong Kong	Hong Kong	N/A	Japanese	$$$$	https://guide.michelin.com/hk/en/hong-kong-region/hong-kong/restaurant/kashiwaya
+Onyx	2019	47	19	Budapest	Hungary	1051	Modern cuisine	$$$$$	https://guide.michelin.com/hu/en/central-hungary/budapest/restaurant/onyx
+Feng Wei Ju	2019	22	114	Macau	Macau	N/A	Hunanese and Sichuan	$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/feng-wei-ju
+Golden Flower	2019	22	114	Macau	Macau	N/A	Chinese	$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/golden-flower
+Mizumi (Macau)	2019	22	114	Macau	Macau	N/A	Japanese	$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/mizumi-macau
+The Tasting Room	2019	22	114	Macau	Macau	N/A	French contemporary	$$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/the-tasting-room
+Alain Ducasse at Morpheus	2019	22	114	Macau	Macau	N/A	French contemporary	$$$$$	https://guide.michelin.com/mo/en/macau-region/macau/restaurant/alain-ducasse-at-morpheus
+L'Atelier de Joël Robuchon	2019	41	-74	New York	New York City	N/A	French	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/l-atelier-de-joel-robuchon562505
+Jungsik	2019	41	-74	New York	New York City	10013	Korean	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/jungsik
+Atera	2019	41	-74	New York	New York City	10013	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/atera
+Jean-Georges	2019	41	-74	New York	New York City	10023	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/jean-georges
+Marea	2019	41	-74	New York	New York City	10019	Seafood	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/marea
+Gabriel Kreuther	2019	41	-74	New York	New York City	10036	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/gabriel-kreuther
+Ichimura at Uchū	2019	41	-74	New York	New York City	10002	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/ichimura-at-uchu
+Sushi Ginza Onodera	2019	41	-74	New York	New York City	10017	Japanese	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/sushi-ginza-onodera
+Ko	2019	41	-74	New York	New York City	10003	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/ko
+The Modern	2019	41	-74	New York	New York City	10019	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/the-modern
+Aquavit	2019	41	-74	New York	New York City	10022	Scandinavian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/aquavit
+Daniel	2019	41	-74	New York	New York City	10065	French	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/daniel
+Aska	2019	41	-74	New York	New York City	11249	Scandinavian	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/aska
+Blanca	2019	41	-74	New York	New York City	11206	Contemporary	$$$$	https://guide.michelin.com/us/en/new-york-state/new-york/restaurant/blanca
+Patrick Guilbaud	2019	53	-6	City Centre	Ireland	D2	Modern French	N/A	https://guide.michelin.com/ie/en/dublin/city-centre/restaurant/patrick-guilbaud
+Oro	2019	-23	-43	Rio de Janeiro - 22441	Rio de Janeiro	015	creative	$$$$$	https://guide.michelin.com/br/en/rio-de-janeiro-region/rio-de-janeiro/restaurant/oro
+Tuju	2019	-24	-47	São Paulo - 05416	Sao Paulo	001	creative	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/tuju
+D.O.M.	2019	-24	-47	São Paulo - 01411	Sao Paulo	011	creative	$$$$$	https://guide.michelin.com/br/en/sao-paulo-region/sao-paulo/restaurant/d-o-m
+Kojima	2019	38	127	Seoul	South Korea	N/A	Sushi	$$$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/kojima
+Jungsik	2019	38	127	Seoul	South Korea	N/A	Korean contemporary	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/jungsik511965
+Kwonsooksoo	2019	38	127	Seoul	South Korea	N/A	Korean	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/kwonsooksoo
+Mingles	2019	38	127	Seoul	South Korea	N/A	Korean contemporary	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/mingles
+Alla Prima	2019	38	127	Seoul	South Korea	N/A	Innovative	$$$	https://guide.michelin.com/kr/en/seoul-capital-area/kr-seoul/restaurant/alla-prima
+Waku Ghin	2018	1	104	Singapore	Singapore	N/A	Japanese contemporary	$$$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/waku-ghin
+Odette	2018	1	104	Singapore	Singapore	N/A	French contemporary	$$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/odette
+Shoukouwa	2018	1	104	Singapore	Singapore	N/A	Sushi	$$$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/shoukouwa
+Shisen Hanten	2018	1	104	Singapore	Singapore	N/A	Chinese	$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/shisen-hanten
+Les Amis	2018	1	104	Singapore	Singapore	N/A	French	$$$	https://guide.michelin.com/sg/en/singapore-region/singapore/restaurant/les-amis
+Fäviken Magasinet	2019	63	13	Järpen	Sweden	837 94	Creative	$$$$	https://guide.michelin.com/se/en/jamtland/jarpen/restaurant/faviken-magasinet
+Gastrologik	2019	59	18	Stockholm	Sweden	114 51	Creative	$$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/gastrologik
+Oaxen Krog	2019	59	18	Stockholm	Sweden	11521	Creative	$$$$	https://guide.michelin.com/se/en/stockholm-region/stockholm/restaurant/oaxen-krog
+Vollmers	2019	56	13	Malmö	Sweden	21133	Creative	$$$$	https://guide.michelin.com/se/en/skane/malmo/restaurant/vollmers
+Daniel Berlin	2019	56	14	Skåne-Tranås	Sweden	273 92	Creative	$$$$	https://guide.michelin.com/se/en/skane/skane-tranas/restaurant/daniel-berlin
+RAW	2019	25	122	Taipei	Taipei	110	Innovative	$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/raw
+Shoun RyuGin	2019	25	122	Taipei	Taipei	110	Japanese contemporary	$$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/shoun-ryugin
+Taïrroir	2019	25	122	Taipei	Taipei	110	Innovative	$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/tairroir
+Sushi Amamoto	2019	25	122	Taipei	Taipei	110	Sushi	$$$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/sushi-amamoto
+The Guest House	2019	25	122	Taipei	Taipei	110	Sichuan-Huai Yang	$$	https://guide.michelin.com/tw/en/taipei-region/taipei/restaurant/the-guest-house
+Gaggan	2019	14	101	Bangkok	Thailand	N/A	Innovative	$$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/gaggan
+Sühring	2019	14	101	Bangkok	Thailand	N/A	European contemporary	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/suhring
+Mezzaluna	2019	14	101	Bangkok	Thailand	N/A	Innovative	$$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/mezzaluna
+Le Normandie	2019	14	101	Bangkok	Thailand	N/A	French contemporary	$$$$	https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/le-normandie
+minibar	2019	39	-77	Washington, D.C.	Washington DC	20004	Contemporary	$$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/minibar
+Pineapple and Pearls	2019	39	-77	Washington, D.C.	Washington DC	20003	Contemporary	$$$$	https://guide.michelin.com/us/en/washington/washington-dc/restaurant/pineapple-and-pearls
+Andrew Fairlie at Gleneagles	2019	56	-4	Auchterarder	United Kingdom	PH3 1NF	Creative French	N/A	https://guide.michelin.com/gb/en/perth-and-kinross/auchterarder/restaurant/andrew-fairlie-at-gleneagles
+L'Enclume	2019	54	-3	Cartmel	United Kingdom	LA11 6PZ	Creative	N/A	https://guide.michelin.com/gb/en/cumbria/cartmel/restaurant/l-enclume
+Raby Hunt	2019	55	-2	Summerhouse	United Kingdom	DL2 3UD	Modern British	N/A	https://guide.michelin.com/gb/en/darlington/summerhouse/restaurant/raby-hunt
+Moor Hall	2019	54	-3	Aughton	United Kingdom	L39 6RT	Modern British	N/A	https://guide.michelin.com/gb/en/lancashire/aughton/restaurant/moor-hall
+Restaurant Sat Bains	2019	53	-1	Nottingham	United Kingdom	NG7 2SA	Creative	N/A	https://guide.michelin.com/gb/en/nottingham/nottingham/restaurant/restaurant-sat-bains
+Restaurant Nathan Outlaw	2019	51	-5	Port Isaac	United Kingdom	PL29 3SB	Seafood	N/A	https://guide.michelin.com/gb/en/cornwall/port-isaac/restaurant/restaurant-nathan-outlaw
+Belmond Le Manoir aux Quat' Saisons	2019	52	-1	Great Milton	United Kingdom	OX44 7PD	French	N/A	https://guide.michelin.com/gb/en/oxfordshire/great-milton/restaurant/belmond-le-manoir-aux-quat-saisons
+Midsummer House	2019	52	0	Cambridge	United Kingdom	CB4 1HA	Modern cuisine	N/A	https://guide.michelin.com/gb/en/cambridgeshire/cambridge/restaurant/midsummer-house
+Hand and Flowers	2019	52	-1	Marlow	United Kingdom	SL7 2BP	Modern British	N/A	https://guide.michelin.com/gb/en/buckinghamshire/marlow/restaurant/hand-and-flowers
+Ledbury	2019	52	0	North Kensington	United Kingdom	W11 2AQ	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/north-kensington/restaurant/ledbury
+CORE by Clare Smyth	2019	52	0	North Kensington	United Kingdom	W11 2PN	Modern British	N/A	https://guide.michelin.com/gb/en/greater-london/north-kensington/restaurant/core-by-clare-smyth
+Le Gavroche	2019	52	0	Mayfair	United Kingdom	W1K 7QR	French	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/le-gavroche
+Kitchen Table at Bubbledogs	2019	52	0	Bloomsbury	United Kingdom	W1T 4QG	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/bloomsbury/restaurant/kitchen-table-at-bubbledogs
+Hélène Darroze at The Connaught	2019	52	0	Mayfair	United Kingdom	W1K 2AL	Modern cuisine	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/helene-darroze-at-the-connaught
+Dinner by Heston Blumenthal	2019	52	0	Hyde Park	United Kingdom	SW1X 7LA	Traditional British	N/A	https://guide.michelin.com/gb/en/greater-london/hyde-park/restaurant/dinner-by-heston-blumenthal
+Umu	2019	52	0	Mayfair	United Kingdom	W1J 6LX	Japanese	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/umu
+Sketch (The Lecture Room & Library)	2019	52	0	Mayfair	United Kingdom	W1S 2XG	Modern French	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/sketch-the-lecture-room-library
+Greenhouse	2019	52	0	Mayfair	United Kingdom	W1J 5NY	Creative	N/A	https://guide.michelin.com/gb/en/greater-london/mayfair/restaurant/greenhouse69393
+Claude Bosi at Bibendum	2019	51	0	Chelsea	United Kingdom	SW3 6RD	French	N/A	https://guide.michelin.com/gb/en/greater-london/chelsea/restaurant/claude-bosi-at-bibendum
+\.
+
+
+--
+-- Name: dt_city_city_sk_seq; Type: SEQUENCE SET; Schema: datawarehouse; Owner: admin
+--
+
+SELECT pg_catalog.setval('datawarehouse.dt_city_city_sk_seq', 180, true);
+
+
+--
+-- Name: dt_cuisine_cuisine_sk_seq; Type: SEQUENCE SET; Schema: datawarehouse; Owner: admin
+--
+
+SELECT pg_catalog.setval('datawarehouse.dt_cuisine_cuisine_sk_seq', 69, true);
+
+
+--
+-- Name: dt_restaurant_restaurant_sk_seq; Type: SEQUENCE SET; Schema: datawarehouse; Owner: admin
+--
+
+SELECT pg_catalog.setval('datawarehouse.dt_restaurant_restaurant_sk_seq', 695, true);
+
+
+--
+-- Name: idx_dt_city_lookup; Type: INDEX; Schema: datawarehouse; Owner: admin
+--
+
+CREATE INDEX idx_dt_city_lookup ON datawarehouse.dt_city USING btree (city_name, city_region);
+
+
+--
+-- Name: idx_dt_city_tk; Type: INDEX; Schema: datawarehouse; Owner: admin
+--
+
+CREATE INDEX idx_dt_city_tk ON datawarehouse.dt_city USING btree (city_sk);
+
+
+--
+-- Name: idx_dt_cuisine_lookup; Type: INDEX; Schema: datawarehouse; Owner: admin
+--
+
+CREATE INDEX idx_dt_cuisine_lookup ON datawarehouse.dt_cuisine USING btree (cuisine_name);
+
+
+--
+-- Name: idx_dt_cuisine_tk; Type: INDEX; Schema: datawarehouse; Owner: admin
+--
+
+CREATE INDEX idx_dt_cuisine_tk ON datawarehouse.dt_cuisine USING btree (cuisine_sk);
+
+
+--
+-- Name: idx_dt_restaurant_lookup; Type: INDEX; Schema: datawarehouse; Owner: admin
+--
+
+CREATE INDEX idx_dt_restaurant_lookup ON datawarehouse.dt_restaurant USING btree (restaurant_name, restaurant_zipcode, restaurant_cuisine_sk, restaurant_city_sk);
+
+
+--
+-- Name: idx_dt_restaurant_tk; Type: INDEX; Schema: datawarehouse; Owner: admin
+--
+
+CREATE INDEX idx_dt_restaurant_tk ON datawarehouse.dt_restaurant USING btree (restaurant_sk);
+
+
+--
+-- Name: idx_ft_awards_lookup; Type: INDEX; Schema: datawarehouse; Owner: admin
+--
+
+CREATE INDEX idx_ft_awards_lookup ON datawarehouse.ft_awards USING btree (award_year, award_price, award_grade, award_restaurant_sk);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
